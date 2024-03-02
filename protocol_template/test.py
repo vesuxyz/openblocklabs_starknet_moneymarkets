@@ -1,5 +1,7 @@
 from dotenv import load_dotenv
 import os
+import sys
+sys.path.append(".")
 
 from utils.data import *
 from protocol_template.function import *
@@ -15,7 +17,7 @@ snowflake_credentials = {
     "warehouse": os.getenv('SNOWFLAKE_WAREHOUSE'),
 }
 
-conn = create_snowflake_connection()
+conn = create_snowflake_connection(snowflake_credentials)
 
 # Load SQL Query
 with open(os.path.join('protocol_template', 'query.sql'), 'r') as file:
@@ -26,6 +28,5 @@ if __name__=='__main__':
         snowflake_connection=conn,
         query=query
     )
-
     # result = your_function(data)
 
