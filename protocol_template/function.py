@@ -4,8 +4,7 @@
 # Define functions
 def your_function(data):
     """
-    Get Non-Recursive Value of Tokens Supplied and
-    Supplier Revenue from Non-Recursive Interest
+    Supply your calculation here according to the Guidelines.
     """
 
     return None

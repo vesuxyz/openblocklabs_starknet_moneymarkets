@@ -1,3 +1,0 @@
-/*
-YOUR QUERY HERE
-*/
