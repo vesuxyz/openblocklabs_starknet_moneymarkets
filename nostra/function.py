@@ -6,7 +6,7 @@ from starknet_py.net.full_node_client import FullNodeClient
 import pandas as pd
 
 
-NODE_URL = "https://starknet-mainnet.public.blastapi.io/rpc/v0_6"
+NODE_URL = "https://starknet-mainnet.public.blastapi.io"
 ASSETS = [{
     "asset_symbol": "STRK",
     "decimals": 18,
@@ -61,7 +61,7 @@ async def get_data(asset):
     formatted_date = datetime.now().strftime("%Y-%m-%d")
     market = asset["asset_address"]
     tokenSymbol = asset["asset_symbol"]
-    block_height = (await client.get_block(block_number="latest")).block_number
+    block_height = await client.get_block_number()
     supply_token_raw = (await get_supply(asset["i_token"], is_cairo_v2_implementation)) + (await get_supply(asset["i_token_c"], is_cairo_v2_implementation))
     borrow_token_raw = await get_supply(asset["d_token"], is_cairo_v2_implementation)
     net_supply_token_raw = supply_token_raw - borrow_token_raw
