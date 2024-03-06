@@ -1,0 +1,920 @@
+[
+    {
+      "members": [
+        {
+          "name": "low",
+          "offset": 0,
+          "type": "felt"
+        },
+        {
+          "name": "high",
+          "offset": 1,
+          "type": "felt"
+        }
+      ],
+      "name": "Uint256",
+      "size": 2,
+      "type": "struct"
+    },
+    {
+      "members": [
+        {
+          "name": "loan_id",
+          "offset": 0,
+          "type": "felt"
+        },
+        {
+          "name": "collateral_token",
+          "offset": 1,
+          "type": "felt"
+        },
+        {
+          "name": "amount",
+          "offset": 2,
+          "type": "Uint256"
+        },
+        {
+          "name": "created_at",
+          "offset": 4,
+          "type": "felt"
+        }
+      ],
+      "name": "Collateral",
+      "size": 5,
+      "type": "struct"
+    },
+    {
+      "members": [
+        {
+          "name": "loan_id",
+          "offset": 0,
+          "type": "felt"
+        },
+        {
+          "name": "borrower",
+          "offset": 1,
+          "type": "felt"
+        },
+        {
+          "name": "market",
+          "offset": 2,
+          "type": "felt"
+        },
+        {
+          "name": "amount",
+          "offset": 3,
+          "type": "Uint256"
+        },
+        {
+          "name": "current_market",
+          "offset": 5,
+          "type": "felt"
+        },
+        {
+          "name": "current_amount",
+          "offset": 6,
+          "type": "Uint256"
+        },
+        {
+          "name": "state",
+          "offset": 8,
+          "type": "felt"
+        },
+        {
+          "name": "l3_integration",
+          "offset": 9,
+          "type": "felt"
+        },
+        {
+          "name": "l3_category",
+          "offset": 10,
+          "type": "felt"
+        },
+        {
+          "name": "created_at",
+          "offset": 11,
+          "type": "felt"
+        }
+      ],
+      "name": "Loan",
+      "size": 12,
+      "type": "struct"
+    },
+    {
+      "data": [
+        {
+          "name": "implementation",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "Upgraded",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "previousAdmin",
+          "type": "felt"
+        },
+        {
+          "name": "newAdmin",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "AdminChanged",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "from_",
+          "type": "felt"
+        },
+        {
+          "name": "to",
+          "type": "felt"
+        },
+        {
+          "name": "value",
+          "type": "Uint256"
+        }
+      ],
+      "keys": [],
+      "name": "Transfer",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "owner",
+          "type": "felt"
+        },
+        {
+          "name": "spender",
+          "type": "felt"
+        },
+        {
+          "name": "value",
+          "type": "Uint256"
+        }
+      ],
+      "keys": [],
+      "name": "Approval",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "previousOwner",
+          "type": "felt"
+        },
+        {
+          "name": "newOwner",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "account",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "Paused",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "account",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "Unpaused",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "collateral_record",
+          "type": "Collateral"
+        },
+        {
+          "name": "amount_added",
+          "type": "Uint256"
+        },
+        {
+          "name": "timestamp",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "collateral_added",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "loan_record",
+          "type": "Loan"
+        },
+        {
+          "name": "collateral_record",
+          "type": "Collateral"
+        },
+        {
+          "name": "timestamp",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "new_loan",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "loan_id",
+          "type": "felt"
+        },
+        {
+          "name": "sender",
+          "type": "felt"
+        },
+        {
+          "name": "reciever",
+          "type": "felt"
+        },
+        {
+          "name": "timestamp",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "loan_transferred",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "old_loan_record",
+          "type": "Loan"
+        },
+        {
+          "name": "new_loan_record",
+          "type": "Loan"
+        },
+        {
+          "name": "timestamp",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "loan_spent",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "fees",
+          "type": "Uint256"
+        },
+        {
+          "name": "dToken_amount",
+          "type": "Uint256"
+        },
+        {
+          "name": "current_amount_post_fee",
+          "type": "Uint256"
+        }
+      ],
+      "keys": [],
+      "name": "fee_deducted",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "loan_record",
+          "type": "Loan"
+        },
+        {
+          "name": "new_loan_record",
+          "type": "Loan"
+        },
+        {
+          "name": "collateral_record",
+          "type": "Collateral"
+        },
+        {
+          "name": "totalUserDebt",
+          "type": "Uint256"
+        },
+        {
+          "name": "deficit",
+          "type": "Uint256"
+        },
+        {
+          "name": "timestamp",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "loan_repaid",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "loan_record",
+          "type": "Loan"
+        },
+        {
+          "name": "fees",
+          "type": "Uint256"
+        }
+      ],
+      "keys": [],
+      "name": "loan_issuance_fee_event",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "debt_token",
+          "type": "felt"
+        },
+        {
+          "name": "underlying_asset",
+          "type": "felt"
+        },
+        {
+          "name": "total_supply",
+          "type": "Uint256"
+        },
+        {
+          "name": "total_debt",
+          "type": "Uint256"
+        },
+        {
+          "name": "timestamp",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "updated_debt_token_price",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "name": "underlying_asset_",
+          "type": "felt"
+        },
+        {
+          "name": "name",
+          "type": "felt"
+        },
+        {
+          "name": "symbol",
+          "type": "felt"
+        },
+        {
+          "name": "decimals",
+          "type": "felt"
+        },
+        {
+          "name": "diamond_address",
+          "type": "felt"
+        }
+      ],
+      "name": "constructor",
+      "outputs": [],
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "name": "underlying_asset_",
+          "type": "felt"
+        },
+        {
+          "name": "name",
+          "type": "felt"
+        },
+        {
+          "name": "symbol",
+          "type": "felt"
+        },
+        {
+          "name": "decimals",
+          "type": "felt"
+        },
+        {
+          "name": "diamond_address",
+          "type": "felt"
+        }
+      ],
+      "name": "initializer",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "diamond_address",
+          "type": "felt"
+        }
+      ],
+      "name": "set_open_router_address",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "loan_id",
+          "type": "felt"
+        }
+      ],
+      "name": "transfer_loan",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "loan_id",
+          "type": "felt"
+        },
+        {
+          "name": "amount",
+          "type": "Uint256"
+        }
+      ],
+      "name": "repay_loan",
+      "outputs": [
+        {
+          "name": "excess",
+          "type": "Uint256"
+        },
+        {
+          "name": "freed_rtokens",
+          "type": "Uint256"
+        }
+      ],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "loan_id",
+          "type": "felt"
+        },
+        {
+          "name": "rToken",
+          "type": "felt"
+        },
+        {
+          "name": "rTokenAmount",
+          "type": "Uint256"
+        }
+      ],
+      "name": "add_collateral",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "amount",
+          "type": "Uint256"
+        },
+        {
+          "name": "rToken",
+          "type": "felt"
+        },
+        {
+          "name": "rTokenAmount",
+          "type": "Uint256"
+        },
+        {
+          "name": "recipient",
+          "type": "felt"
+        }
+      ],
+      "name": "loan_request",
+      "outputs": [
+        {
+          "name": "loan_id",
+          "type": "felt"
+        }
+      ],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "integration",
+          "type": "felt"
+        },
+        {
+          "name": "calldata_len",
+          "type": "felt"
+        },
+        {
+          "name": "calldata",
+          "type": "felt*"
+        }
+      ],
+      "name": "interact_with_l3",
+      "outputs": [
+        {
+          "name": "return_data_len",
+          "type": "felt"
+        },
+        {
+          "name": "return_data",
+          "type": "felt*"
+        }
+      ],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "loan_id",
+          "type": "felt"
+        }
+      ],
+      "name": "revert_interaction_with_l3",
+      "outputs": [
+        {
+          "name": "reverted_amount",
+          "type": "Uint256"
+        }
+      ],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "loan_id",
+          "type": "felt"
+        },
+        {
+          "name": "original_borrower",
+          "type": "felt"
+        }
+      ],
+      "name": "mark_liquidation",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "borrow_apr",
+          "type": "Uint256"
+        }
+      ],
+      "name": "update_borrow_vault_state",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_open_router_address",
+      "outputs": [
+        {
+          "name": "diamond_address",
+          "type": "felt"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "loan_id",
+          "type": "felt"
+        }
+      ],
+      "name": "is_loan_active",
+      "outputs": [
+        {
+          "name": "is_active",
+          "type": "felt"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalDebt",
+      "outputs": [
+        {
+          "name": "debt_amount",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_accrued_interest",
+      "outputs": [
+        {
+          "name": "interest",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "debt_tokens",
+          "type": "Uint256"
+        }
+      ],
+      "name": "convert_to_underlying_asset",
+      "outputs": [
+        {
+          "name": "amount",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "token_address",
+          "type": "felt"
+        }
+      ],
+      "name": "get_total_spent_token_amount",
+      "outputs": [
+        {
+          "name": "amount",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "total_unspent_token_amount",
+      "outputs": [
+        {
+          "name": "amount",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "loan_id",
+          "type": "felt"
+        }
+      ],
+      "name": "get_loan_record",
+      "outputs": [
+        {
+          "name": "loan_record",
+          "type": "Loan"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "collateral_id",
+          "type": "felt"
+        }
+      ],
+      "name": "get_collateral_record",
+      "outputs": [
+        {
+          "name": "result",
+          "type": "Collateral"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "debt_amount",
+          "type": "Uint256"
+        }
+      ],
+      "name": "convert_to_debt_token",
+      "outputs": [
+        {
+          "name": "dToken_amount",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_underlying_asset",
+      "outputs": [
+        {
+          "name": "underlying_asset_address",
+          "type": "felt"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_underlying_debt",
+      "outputs": [
+        {
+          "name": "debt",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "collateral_address",
+          "type": "felt"
+        }
+      ],
+      "name": "get_total_collaterals",
+      "outputs": [
+        {
+          "name": "amount",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "loan_id",
+          "type": "felt"
+        }
+      ],
+      "name": "get_l3_usdt_value",
+      "outputs": [
+        {
+          "name": "value",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_loans_len",
+      "outputs": [
+        {
+          "name": "loans_len",
+          "type": "felt"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "loan_id",
+          "type": "felt"
+        }
+      ],
+      "name": "get_health_factor",
+      "outputs": [
+        {
+          "name": "factor",
+          "type": "felt"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "amount",
+          "type": "Uint256"
+        },
+        {
+          "name": "market",
+          "type": "felt"
+        },
+        {
+          "name": "collateral_market",
+          "type": "felt"
+        }
+      ],
+      "name": "max_loan_limit",
+      "outputs": [
+        {
+          "name": "max_loan_limit",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "name",
+      "outputs": [
+        {
+          "name": "name",
+          "type": "felt"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "symbol",
+      "outputs": [
+        {
+          "name": "symbol",
+          "type": "felt"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "decimals",
+      "outputs": [
+        {
+          "name": "decimals",
+          "type": "felt"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalSupply",
+      "outputs": [
+        {
+          "name": "total_supply",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "account",
+          "type": "felt"
+        }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "name": "balance",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
