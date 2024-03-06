@@ -1,0 +1,871 @@
+[
+    {
+      "members": [
+        {
+          "name": "low",
+          "offset": 0,
+          "type": "felt"
+        },
+        {
+          "name": "high",
+          "offset": 1,
+          "type": "felt"
+        }
+      ],
+      "name": "Uint256",
+      "size": 2,
+      "type": "struct"
+    },
+    {
+      "data": [
+        {
+          "name": "implementation",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "Upgraded",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "previousAdmin",
+          "type": "felt"
+        },
+        {
+          "name": "newAdmin",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "AdminChanged",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "account",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "Paused",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "account",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "Unpaused",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "previousOwner",
+          "type": "felt"
+        },
+        {
+          "name": "newOwner",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "from_",
+          "type": "felt"
+        },
+        {
+          "name": "to",
+          "type": "felt"
+        },
+        {
+          "name": "amount",
+          "type": "Uint256"
+        },
+        {
+          "name": "shares",
+          "type": "Uint256"
+        }
+      ],
+      "keys": [],
+      "name": "Deposit",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "sender",
+          "type": "felt"
+        },
+        {
+          "name": "receiver",
+          "type": "felt"
+        },
+        {
+          "name": "owner",
+          "type": "felt"
+        },
+        {
+          "name": "assets",
+          "type": "Uint256"
+        },
+        {
+          "name": "share",
+          "type": "Uint256"
+        }
+      ],
+      "keys": [],
+      "name": "Withdraw",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "from_",
+          "type": "felt"
+        },
+        {
+          "name": "to",
+          "type": "felt"
+        },
+        {
+          "name": "value",
+          "type": "Uint256"
+        }
+      ],
+      "keys": [],
+      "name": "Transfer",
+      "type": "event"
+    },
+    {
+      "data": [
+        {
+          "name": "supply_token",
+          "type": "felt"
+        },
+        {
+          "name": "underlying_asset",
+          "type": "felt"
+        },
+        {
+          "name": "total_supply",
+          "type": "Uint256"
+        },
+        {
+          "name": "total_assets",
+          "type": "Uint256"
+        },
+        {
+          "name": "timestamp",
+          "type": "felt"
+        }
+      ],
+      "keys": [],
+      "name": "updated_supply_token_price",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "name": "asset",
+          "type": "felt"
+        },
+        {
+          "name": "name_",
+          "type": "felt"
+        },
+        {
+          "name": "symbol_",
+          "type": "felt"
+        },
+        {
+          "name": "decimals_",
+          "type": "felt"
+        },
+        {
+          "name": "_v1_core_diamond_address",
+          "type": "felt"
+        },
+        {
+          "name": "new_admin",
+          "type": "felt"
+        }
+      ],
+      "name": "constructor",
+      "outputs": [],
+      "type": "constructor"
+    },
+    {
+      "data": [
+        {
+          "name": "owner",
+          "type": "felt"
+        },
+        {
+          "name": "spender",
+          "type": "felt"
+        },
+        {
+          "name": "value",
+          "type": "Uint256"
+        }
+      ],
+      "keys": [],
+      "name": "Approval",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "name": "asset",
+          "type": "felt"
+        },
+        {
+          "name": "name_",
+          "type": "felt"
+        },
+        {
+          "name": "symbol_",
+          "type": "felt"
+        },
+        {
+          "name": "decimals_",
+          "type": "felt"
+        },
+        {
+          "name": "_v1_core_diamond_address",
+          "type": "felt"
+        }
+      ],
+      "name": "initializer",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "amount",
+          "type": "Uint256"
+        },
+        {
+          "name": "receiver",
+          "type": "felt"
+        }
+      ],
+      "name": "deposit",
+      "outputs": [
+        {
+          "name": "rToken_amount",
+          "type": "Uint256"
+        }
+      ],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "user",
+          "type": "felt"
+        },
+        {
+          "name": "rTokens_amount",
+          "type": "Uint256"
+        }
+      ],
+      "name": "lock_rTokens",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "user",
+          "type": "felt"
+        },
+        {
+          "name": "rTokens_amount",
+          "type": "Uint256"
+        }
+      ],
+      "name": "free_locked_rTokens",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "loan_id",
+          "type": "felt"
+        },
+        {
+          "name": "amount_assets",
+          "type": "Uint256"
+        }
+      ],
+      "name": "transfer_assets_to_borrow_vault",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "user",
+          "type": "felt"
+        },
+        {
+          "name": "recipient",
+          "type": "felt"
+        },
+        {
+          "name": "rTokens_amount",
+          "type": "Uint256"
+        }
+      ],
+      "name": "liquidation_transfer",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "loan_id",
+          "type": "felt"
+        },
+        {
+          "name": "amount_assets_to_repay",
+          "type": "Uint256"
+        }
+      ],
+      "name": "repay_from_borrow_vault",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "deposit_apr",
+          "type": "Uint256"
+        }
+      ],
+      "name": "update_deposit_vault_state",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "assets",
+          "type": "Uint256"
+        },
+        {
+          "name": "receiver",
+          "type": "felt"
+        },
+        {
+          "name": "owner",
+          "type": "felt"
+        }
+      ],
+      "name": "withdraw",
+      "outputs": [
+        {
+          "name": "rToken_shares_burn",
+          "type": "Uint256"
+        }
+      ],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "recipient",
+          "type": "felt"
+        },
+        {
+          "name": "amount",
+          "type": "Uint256"
+        }
+      ],
+      "name": "transfer",
+      "outputs": [
+        {
+          "name": "success",
+          "type": "felt"
+        }
+      ],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "sender",
+          "type": "felt"
+        },
+        {
+          "name": "recipient",
+          "type": "felt"
+        },
+        {
+          "name": "amount",
+          "type": "Uint256"
+        }
+      ],
+      "name": "transferFrom",
+      "outputs": [
+        {
+          "name": "success",
+          "type": "felt"
+        }
+      ],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "spender",
+          "type": "felt"
+        },
+        {
+          "name": "amount",
+          "type": "Uint256"
+        }
+      ],
+      "name": "approve",
+      "outputs": [
+        {
+          "name": "success",
+          "type": "felt"
+        }
+      ],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "spender",
+          "type": "felt"
+        },
+        {
+          "name": "added_value",
+          "type": "Uint256"
+        }
+      ],
+      "name": "increase_allowance",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "spender",
+          "type": "felt"
+        },
+        {
+          "name": "subtracted_value",
+          "type": "Uint256"
+        }
+      ],
+      "name": "decrease_allowance",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "felt"
+        },
+        {
+          "name": "spender",
+          "type": "felt"
+        },
+        {
+          "name": "subtracted_value",
+          "type": "Uint256"
+        }
+      ],
+      "name": "ERC20_decrease_allowance_manual",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "threshold",
+          "type": "felt"
+        }
+      ],
+      "name": "set_daily_withdrawal_threshold",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "reserves",
+          "type": "Uint256"
+        }
+      ],
+      "name": "set_min_snapshot_reserves",
+      "outputs": [],
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "amount",
+          "type": "Uint256"
+        }
+      ],
+      "name": "preview_deposit",
+      "outputs": [
+        {
+          "name": "shares",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "exchange_rate",
+      "outputs": [
+        {
+          "name": "asset_to_rTokens",
+          "type": "Uint256"
+        },
+        {
+          "name": "rTokens_to_asset",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "total_assets",
+      "outputs": [
+        {
+          "name": "total_assets",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "unaccrued_total_assets",
+      "outputs": [
+        {
+          "name": "unaccrued_total_assets",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "total_lent_assets",
+      "outputs": [
+        {
+          "name": "lent_assets",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "rToken_incentive",
+      "outputs": [
+        {
+          "name": "rToken_incentive",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "user",
+          "type": "felt"
+        }
+      ],
+      "name": "get_free_rTokens",
+      "outputs": [
+        {
+          "name": "free_available_rTokens",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "rToken_underlying_asset",
+      "outputs": [
+        {
+          "name": "underlying_asset",
+          "type": "felt"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_v1_core_diamond_address",
+      "outputs": [
+        {
+          "name": "v1_core_diamond_address",
+          "type": "felt"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "borrower",
+          "type": "felt"
+        },
+        {
+          "name": "loan_id",
+          "type": "felt"
+        }
+      ],
+      "name": "get_repay_amount_borrow_vault",
+      "outputs": [
+        {
+          "name": "get_repay_amount",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "incentive_accrued_interest",
+      "outputs": [
+        {
+          "name": "incentive_accrued_interest",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "accrued_interest",
+      "outputs": [
+        {
+          "name": "accrued_interest",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "rToken_shares",
+          "type": "Uint256"
+        }
+      ],
+      "name": "preview_redeem",
+      "outputs": [
+        {
+          "name": "asset_amount_to_withdraw",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "assets",
+          "type": "Uint256"
+        }
+      ],
+      "name": "preview_withdraw",
+      "outputs": [
+        {
+          "name": "get_calculated_shares",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "name",
+      "outputs": [
+        {
+          "name": "name",
+          "type": "felt"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "symbol",
+      "outputs": [
+        {
+          "name": "symbol",
+          "type": "felt"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "decimals",
+      "outputs": [
+        {
+          "name": "decimals",
+          "type": "felt"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalSupply",
+      "outputs": [
+        {
+          "name": "total_supply",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "unaccrued_total_supply",
+      "outputs": [
+        {
+          "name": "get_unaccrued_total_supply_",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "account",
+          "type": "felt"
+        }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "name": "balance",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "felt"
+        },
+        {
+          "name": "spender",
+          "type": "felt"
+        }
+      ],
+      "name": "allowances",
+      "outputs": [
+        {
+          "name": "allowances",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_next_withdrawal_reset_time",
+      "outputs": [
+        {
+          "name": "withdrawal_reset_time",
+          "type": "felt"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_deposit_reserves_snapshot",
+      "outputs": [
+        {
+          "name": "reserves",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_daily_withdrawal_threshold",
+      "outputs": [
+        {
+          "name": "threshold",
+          "type": "felt"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "get_min_snapshot_reserves",
+      "outputs": [
+        {
+          "name": "reserves",
+          "type": "Uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
