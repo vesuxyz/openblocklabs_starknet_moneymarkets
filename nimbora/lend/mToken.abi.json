@@ -1,0 +1,48 @@
+[
+  {
+    "members": [
+      {
+        "name": "low",
+        "offset": 0,
+        "type": "felt"
+      },
+      {
+        "name": "high",
+        "offset": 1,
+        "type": "felt"
+      }
+    ],
+    "name": "Uint256",
+    "size": 2,
+    "type": "struct"
+  },
+  {
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "total_assets",
+        "type": "Uint256"
+      }
+    ],
+    "keys": [],
+    "name": "total_assets",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "amount",
+        "type": "Uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "lending_rate",
+        "type": "Uint256"
+      }
+    ],
+    "keys": [],
+    "name": "convert_to_assets",
+    "type": "function"
+  }
+]
