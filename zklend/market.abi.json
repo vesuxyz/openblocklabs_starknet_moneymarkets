@@ -1,0 +1,865 @@
+[
+  {
+    "members": [
+      {
+        "name": "enabled",
+        "offset": 0,
+        "type": "felt"
+      },
+      {
+        "name": "decimals",
+        "offset": 1,
+        "type": "felt"
+      },
+      {
+        "name": "z_token_address",
+        "offset": 2,
+        "type": "felt"
+      },
+      {
+        "name": "interest_rate_model",
+        "offset": 3,
+        "type": "felt"
+      },
+      {
+        "name": "collateral_factor",
+        "offset": 4,
+        "type": "felt"
+      },
+      {
+        "name": "borrow_factor",
+        "offset": 5,
+        "type": "felt"
+      },
+      {
+        "name": "reserve_factor",
+        "offset": 6,
+        "type": "felt"
+      },
+      {
+        "name": "last_update_timestamp",
+        "offset": 7,
+        "type": "felt"
+      },
+      {
+        "name": "lending_accumulator",
+        "offset": 8,
+        "type": "felt"
+      },
+      {
+        "name": "debt_accumulator",
+        "offset": 9,
+        "type": "felt"
+      },
+      {
+        "name": "current_lending_rate",
+        "offset": 10,
+        "type": "felt"
+      },
+      {
+        "name": "current_borrowing_rate",
+        "offset": 11,
+        "type": "felt"
+      },
+      {
+        "name": "raw_total_debt",
+        "offset": 12,
+        "type": "felt"
+      },
+      {
+        "name": "flash_loan_fee",
+        "offset": 13,
+        "type": "felt"
+      },
+      {
+        "name": "liquidation_bonus",
+        "offset": 14,
+        "type": "felt"
+      },
+      {
+        "name": "debt_limit",
+        "offset": 15,
+        "type": "felt"
+      }
+    ],
+    "name": "ReserveData",
+    "size": 16,
+    "type": "struct"
+  },
+  {
+    "data": [
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "z_token",
+        "type": "felt"
+      },
+      {
+        "name": "decimals",
+        "type": "felt"
+      },
+      {
+        "name": "interest_rate_model",
+        "type": "felt"
+      },
+      {
+        "name": "collateral_factor",
+        "type": "felt"
+      },
+      {
+        "name": "borrow_factor",
+        "type": "felt"
+      },
+      {
+        "name": "reserve_factor",
+        "type": "felt"
+      },
+      {
+        "name": "flash_loan_fee",
+        "type": "felt"
+      },
+      {
+        "name": "liquidation_bonus",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "NewReserve",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "new_treasury",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "TreasuryUpdate",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "lending_accumulator",
+        "type": "felt"
+      },
+      {
+        "name": "debt_accumulator",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "AccumulatorsSync",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "lending_rate",
+        "type": "felt"
+      },
+      {
+        "name": "borrowing_rate",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "InterestRatesSync",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "limit",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "DebtLimitUpdate",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "user",
+        "type": "felt"
+      },
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "face_amount",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "Deposit",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "user",
+        "type": "felt"
+      },
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "face_amount",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "Withdrawal",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "user",
+        "type": "felt"
+      },
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "raw_amount",
+        "type": "felt"
+      },
+      {
+        "name": "face_amount",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "Borrowing",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "repayer",
+        "type": "felt"
+      },
+      {
+        "name": "user",
+        "type": "felt"
+      },
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "raw_amount",
+        "type": "felt"
+      },
+      {
+        "name": "face_amount",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "Repayment",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "liquidator",
+        "type": "felt"
+      },
+      {
+        "name": "user",
+        "type": "felt"
+      },
+      {
+        "name": "debt_token",
+        "type": "felt"
+      },
+      {
+        "name": "debt_raw_amount",
+        "type": "felt"
+      },
+      {
+        "name": "debt_face_amount",
+        "type": "felt"
+      },
+      {
+        "name": "collateral_token",
+        "type": "felt"
+      },
+      {
+        "name": "collateral_amount",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "Liquidation",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "initiator",
+        "type": "felt"
+      },
+      {
+        "name": "receiver",
+        "type": "felt"
+      },
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "felt"
+      },
+      {
+        "name": "fee",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "FlashLoan",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "user",
+        "type": "felt"
+      },
+      {
+        "name": "token",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "CollateralEnabled",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "user",
+        "type": "felt"
+      },
+      {
+        "name": "token",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "CollateralDisabled",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "new_class_hash",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "ContractUpgraded",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "previousOwner",
+        "type": "felt"
+      },
+      {
+        "name": "newOwner",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "name": "owner",
+        "type": "felt"
+      },
+      {
+        "name": "_oracle",
+        "type": "felt"
+      }
+    ],
+    "name": "constructor",
+    "outputs": [],
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "name": "new_implementation",
+        "type": "felt"
+      }
+    ],
+    "name": "upgrade",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      }
+    ],
+    "name": "get_reserve_data",
+    "outputs": [
+      {
+        "name": "data",
+        "type": "ReserveData"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      }
+    ],
+    "name": "get_lending_accumulator",
+    "outputs": [
+      {
+        "name": "res",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      }
+    ],
+    "name": "get_debt_accumulator",
+    "outputs": [
+      {
+        "name": "res",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      }
+    ],
+    "name": "get_pending_treasury_amount",
+    "outputs": [
+      {
+        "name": "res",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      }
+    ],
+    "name": "get_total_debt_for_token",
+    "outputs": [
+      {
+        "name": "debt",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "user",
+        "type": "felt"
+      },
+      {
+        "name": "token",
+        "type": "felt"
+      }
+    ],
+    "name": "get_user_debt_for_token",
+    "outputs": [
+      {
+        "name": "debt",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "user",
+        "type": "felt"
+      }
+    ],
+    "name": "get_user_flags",
+    "outputs": [
+      {
+        "name": "map",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "user",
+        "type": "felt"
+      },
+      {
+        "name": "apply_borrow_factor",
+        "type": "felt"
+      }
+    ],
+    "name": "is_user_undercollateralized",
+    "outputs": [
+      {
+        "name": "is_undercollateralized",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "user",
+        "type": "felt"
+      },
+      {
+        "name": "token",
+        "type": "felt"
+      }
+    ],
+    "name": "is_collateral_enabled",
+    "outputs": [
+      {
+        "name": "enabled",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "user",
+        "type": "felt"
+      }
+    ],
+    "name": "user_has_debt",
+    "outputs": [
+      {
+        "name": "has_debt",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "felt"
+      }
+    ],
+    "name": "deposit",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "felt"
+      }
+    ],
+    "name": "withdraw",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      }
+    ],
+    "name": "withdraw_all",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "felt"
+      }
+    ],
+    "name": "borrow",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "felt"
+      }
+    ],
+    "name": "repay",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "felt"
+      },
+      {
+        "name": "beneficiary",
+        "type": "felt"
+      }
+    ],
+    "name": "repay_for",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      }
+    ],
+    "name": "repay_all",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      }
+    ],
+    "name": "enable_collateral",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      }
+    ],
+    "name": "disable_collateral",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "user",
+        "type": "felt"
+      },
+      {
+        "name": "debt_token",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "felt"
+      },
+      {
+        "name": "collateral_token",
+        "type": "felt"
+      }
+    ],
+    "name": "liquidate",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "receiver",
+        "type": "felt"
+      },
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "felt"
+      },
+      {
+        "name": "calldata_len",
+        "type": "felt"
+      },
+      {
+        "name": "calldata",
+        "type": "felt*"
+      }
+    ],
+    "name": "flash_loan",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "z_token",
+        "type": "felt"
+      },
+      {
+        "name": "interest_rate_model",
+        "type": "felt"
+      },
+      {
+        "name": "collateral_factor",
+        "type": "felt"
+      },
+      {
+        "name": "borrow_factor",
+        "type": "felt"
+      },
+      {
+        "name": "reserve_factor",
+        "type": "felt"
+      },
+      {
+        "name": "flash_loan_fee",
+        "type": "felt"
+      },
+      {
+        "name": "liquidation_bonus",
+        "type": "felt"
+      }
+    ],
+    "name": "add_reserve",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "new_treasury",
+        "type": "felt"
+      }
+    ],
+    "name": "set_treasury",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      },
+      {
+        "name": "limit",
+        "type": "felt"
+      }
+    ],
+    "name": "set_debt_limit",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "new_owner",
+        "type": "felt"
+      }
+    ],
+    "name": "transfer_ownership",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounce_ownership",
+    "outputs": [],
+    "type": "function"
+  }
+]

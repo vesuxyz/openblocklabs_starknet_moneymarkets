@@ -1,0 +1,543 @@
+[
+  {
+    "members": [
+      {
+        "name": "low",
+        "offset": 0,
+        "type": "felt"
+      },
+      {
+        "name": "high",
+        "offset": 1,
+        "type": "felt"
+      }
+    ],
+    "name": "Uint256",
+    "size": 2,
+    "type": "struct"
+  },
+  {
+    "data": [
+      {
+        "name": "from_",
+        "type": "felt"
+      },
+      {
+        "name": "to",
+        "type": "felt"
+      },
+      {
+        "name": "raw_value",
+        "type": "felt"
+      },
+      {
+        "name": "accumulator",
+        "type": "felt"
+      },
+      {
+        "name": "face_value",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "RawTransfer",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "new_class_hash",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "ContractUpgraded",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "previousOwner",
+        "type": "felt"
+      },
+      {
+        "name": "newOwner",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "from_",
+        "type": "felt"
+      },
+      {
+        "name": "to",
+        "type": "felt"
+      },
+      {
+        "name": "value",
+        "type": "Uint256"
+      }
+    ],
+    "keys": [],
+    "name": "Transfer",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "owner",
+        "type": "felt"
+      },
+      {
+        "name": "spender",
+        "type": "felt"
+      },
+      {
+        "name": "value",
+        "type": "Uint256"
+      }
+    ],
+    "keys": [],
+    "name": "Approval",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "name": "_owner",
+        "type": "felt"
+      },
+      {
+        "name": "_market",
+        "type": "felt"
+      },
+      {
+        "name": "_underlying",
+        "type": "felt"
+      },
+      {
+        "name": "_name",
+        "type": "felt"
+      },
+      {
+        "name": "_symbol",
+        "type": "felt"
+      },
+      {
+        "name": "_decimals",
+        "type": "felt"
+      }
+    ],
+    "name": "constructor",
+    "outputs": [],
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "name": "new_implementation",
+        "type": "felt"
+      }
+    ],
+    "name": "upgrade",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "name",
+    "outputs": [
+      {
+        "name": "name",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [
+      {
+        "name": "symbol",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "decimals",
+    "outputs": [
+      {
+        "name": "decimals",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalSupply",
+    "outputs": [
+      {
+        "name": "total_supply",
+        "type": "Uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "felt_total_supply",
+    "outputs": [
+      {
+        "name": "total_supply",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "account",
+        "type": "felt"
+      }
+    ],
+    "name": "balanceOf",
+    "outputs": [
+      {
+        "name": "balance",
+        "type": "Uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "account",
+        "type": "felt"
+      }
+    ],
+    "name": "felt_balance_of",
+    "outputs": [
+      {
+        "name": "balance",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "owner",
+        "type": "felt"
+      },
+      {
+        "name": "spender",
+        "type": "felt"
+      }
+    ],
+    "name": "allowance",
+    "outputs": [
+      {
+        "name": "remaining",
+        "type": "Uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "owner",
+        "type": "felt"
+      },
+      {
+        "name": "spender",
+        "type": "felt"
+      }
+    ],
+    "name": "felt_allowance",
+    "outputs": [
+      {
+        "name": "remaining",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "underlying_token",
+    "outputs": [
+      {
+        "name": "token",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "get_raw_total_supply",
+    "outputs": [
+      {
+        "name": "raw_supply",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "recipient",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "Uint256"
+      }
+    ],
+    "name": "transfer",
+    "outputs": [
+      {
+        "name": "success",
+        "type": "felt"
+      }
+    ],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "recipient",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "felt"
+      }
+    ],
+    "name": "felt_transfer",
+    "outputs": [
+      {
+        "name": "success",
+        "type": "felt"
+      }
+    ],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "sender",
+        "type": "felt"
+      },
+      {
+        "name": "recipient",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "Uint256"
+      }
+    ],
+    "name": "transferFrom",
+    "outputs": [
+      {
+        "name": "success",
+        "type": "felt"
+      }
+    ],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "sender",
+        "type": "felt"
+      },
+      {
+        "name": "recipient",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "felt"
+      }
+    ],
+    "name": "felt_transfer_from",
+    "outputs": [
+      {
+        "name": "success",
+        "type": "felt"
+      }
+    ],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "spender",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "Uint256"
+      }
+    ],
+    "name": "approve",
+    "outputs": [
+      {
+        "name": "success",
+        "type": "felt"
+      }
+    ],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "spender",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "felt"
+      }
+    ],
+    "name": "felt_approve",
+    "outputs": [
+      {
+        "name": "success",
+        "type": "felt"
+      }
+    ],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "recipient",
+        "type": "felt"
+      }
+    ],
+    "name": "transfer_all",
+    "outputs": [
+      {
+        "name": "amount_transferred",
+        "type": "felt"
+      }
+    ],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "to",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "felt"
+      }
+    ],
+    "name": "mint",
+    "outputs": [
+      {
+        "name": "zero_balance_before",
+        "type": "felt"
+      }
+    ],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "user",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "felt"
+      }
+    ],
+    "name": "burn",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "user",
+        "type": "felt"
+      }
+    ],
+    "name": "burn_all",
+    "outputs": [
+      {
+        "name": "amount_burnt",
+        "type": "felt"
+      }
+    ],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "from_account",
+        "type": "felt"
+      },
+      {
+        "name": "to_account",
+        "type": "felt"
+      },
+      {
+        "name": "amount",
+        "type": "felt"
+      }
+    ],
+    "name": "move",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "new_owner",
+        "type": "felt"
+      }
+    ],
+    "name": "transfer_ownership",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounce_ownership",
+    "outputs": [],
+    "type": "function"
+  }
+]
