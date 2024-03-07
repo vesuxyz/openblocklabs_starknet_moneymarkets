@@ -22,7 +22,9 @@ async def get_token_info(tokenInfo, provider):
     
     borrow_amount = res[0]
     supply_amount = res[1]
-    
+    net_supply_token = ((supply_amount * eth_price) / 10**18 - borrow_amount) / eth_price
+    lending_index_rate = collateral_ration / eth_price;
+
     block = provider.eth.get_block_number()
     now = datetime.now()
     formatted_date = now.strftime("%Y-%m-%d")
@@ -34,10 +36,10 @@ async def get_token_info(tokenInfo, provider):
         "tokenSymbol": tokenInfo["name"],
         "supply_token": supply_amount,
         "borrow_token": borrow_amount,
-        "net_supply_token": supply_amount,
+        "net_supply_token": net_supply_token,
         "non_recursive_supply_token": supply_amount,
         "block_height": block,
-        "lending_index_rate": collateral_ration
+        "lending_index_rate": lending_index_rate
     }
 
 
