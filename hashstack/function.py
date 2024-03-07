@@ -20,12 +20,13 @@ async def get_token_info(tokenInfo, provider):
 
     (_, lending_rate) = await supply_contract.functions["exchange_rate"].call()
 
-    # borrow_contract = Contract(
-    #     address=tokenInfo['dToken'], abi=dTokenAbi, provider=provider
-    # )
+    borrow_contract = Contract(
+        address=tokenInfo['dToken'], abi=dTokenAbi, provider=provider
+    )
 
-    # (borrowing_index,) = await borrow_contract.functions["convert_to_underlying_asset"].call(10**18)
+    (total_debt,) = await borrow_contract.functions["totalDebt"].call()
 
+    net_supply = total_assets - total_debt
     block = await provider.get_block_number()
     now = datetime.now()
     formatted_date = now.strftime("%Y-%m-%d")
@@ -36,8 +37,8 @@ async def get_token_info(tokenInfo, provider):
         "market": tokenInfo["address"],
         "tokenSymbol": tokenInfo["name"],
         "supply_token": total_assets,
-        "borrow_token": 0, # as hashstack has no recursive borrowing, this metric doesnt make sense
-        "net_supply_token": total_assets,
+        "borrow_token": total_debt,
+        "net_supply_token": net_supply,
         "non_recursive_supply_token": total_assets,
         "block_height": block,
         "lending_index_rate": lending_rate/10**18
