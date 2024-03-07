@@ -1,0 +1,60 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_borrower",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_price",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCurrentICR",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_borrower",
+        "type": "address"
+      }
+    ],
+    "name": "getEntireDebtAndColl",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "debt",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "coll",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pendingLUSDDebtReward",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "pendingETHReward",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
