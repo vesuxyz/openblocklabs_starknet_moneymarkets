@@ -1,9 +1,9 @@
 import asyncio
 from datetime import datetime
+from decimal import Decimal
 from typing import Dict, List, Union
 from starknet_py.contract import Contract
 from starknet_py.net.full_node_client import FullNodeClient
-from starknet_py.cairo.felt import decode_shortstring
 import pandas as pd
 import json
 
@@ -12,6 +12,8 @@ MARKET_ABI: List = json.load(open('./zklend/market.abi.json'))
 
 NODE_URL = "https://starknet-mainnet.public.blastapi.io"
 MARKET = "0x04c0a5193d58f74fbace4b74dcf65481e734ed1714121bdc571da345540efa05"
+
+LENDING_ACCUMULATOR_DECIMALS = 27
 
 assets: List[Dict[str, Union[str, int]]] = [{
     "symbol": "STRK",
@@ -71,6 +73,9 @@ async def get_lending_accumulator(underlying_address: int, block_number: int) ->
     (uint_value,) = await contract.functions["get_lending_accumulator"].call(underlying_address, block_number=block_number)
     return uint_value
 
+def scale_down(value: int, decimals: int) -> Decimal:
+    return Decimal(value) / Decimal(f"1e{decimals}")
+
 async def main():
     a = [get_data(asset) for asset in assets];
     results = await asyncio.gather(*a)
@@ -89,12 +94,12 @@ async def get_data(asset):
         "date": get_today(),
         "market": asset["underlying"],
         "tokenSymbol": asset["symbol"],
-        "supply_token": supply,
-        "borrow_token": debt,
-        "net_supply_token": supply - debt,
+        "supply_token": scale_down(supply, asset["token_decimals"]),
+        "borrow_token": scale_down(debt, asset["token_decimals"]),
+        "net_supply_token": scale_down(supply - debt, asset["token_decimals"]),
         "non_recursive_supply_token": 0,
         "block_height": block_height,
-        "lending_index_rate": lending_accumulator
+        "lending_index_rate": scale_down(lending_accumulator, LENDING_ACCUMULATOR_DECIMALS),
     }
 
 if __name__ == "__main__":
