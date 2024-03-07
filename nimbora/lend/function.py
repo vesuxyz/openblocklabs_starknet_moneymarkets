@@ -18,8 +18,8 @@ async def get_token_info(tokenInfo, provider):
         address=tokenInfo['mToken'], abi=mTokenAbi, provider=provider
     )
 
-    total_assets = (await token_manager_contract.functions["total_assets"].call())[0]
-    lending_rate = (await token_manager_contract.functions["convert_to_assets"].call({"low": 1000000000000000000, "high": 0}))[0]
+    total_assets = (await token_manager_contract.functions["total_assets"].call())[0] / 10**18
+    lending_rate = (await token_manager_contract.functions["convert_to_assets"].call({"low": 1000000000000000000, "high": 0}))[0] / 10**18
 
     block = await provider.get_block_number()
     now = datetime.now()
@@ -35,7 +35,7 @@ async def get_token_info(tokenInfo, provider):
         "net_supply_token": total_assets,
         "non_recursive_supply_token": total_assets,
         "block_height": block,
-        "lending_index_rate": lending_rate/10**18
+        "lending_index_rate": lending_rate
     }
 
 # Define functions

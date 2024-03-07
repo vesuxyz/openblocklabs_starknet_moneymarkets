@@ -18,12 +18,9 @@ async def get_token_info(tokenInfo, provider):
     res = tm_contract.functions.getEntireDebtAndColl(tokenInfo["trove"]).call()
     eth_price = pf_contract.functions.fetchPrice().call()
     
-    collateral_ration = tm_contract.functions.getCurrentICR(tokenInfo["trove"], eth_price).call()
-    
-    borrow_amount = res[0]
-    supply_amount = res[1]
-    net_supply_token = ((supply_amount * eth_price) / 10**18 - borrow_amount) / eth_price
-    lending_index_rate = collateral_ration / eth_price;
+    borrow_amount = res[0] / 10**18
+    supply_amount = res[1] / 10**18
+    net_supply_token = supply_amount - (borrow_amount / eth_price) * 10**18
 
     block = provider.eth.get_block_number()
     now = datetime.now()
@@ -33,13 +30,13 @@ async def get_token_info(tokenInfo, provider):
         "protocol": "Nimbora",
         "date": formatted_date,
         "market": tokenInfo["address"],
-        "tokenSymbol": tokenInfo["name"],
+        "tokenSymbol": tokenInfo["symbol"],
         "supply_token": supply_amount,
         "borrow_token": borrow_amount,
         "net_supply_token": net_supply_token,
-        "non_recursive_supply_token": supply_amount,
+        "non_recursive_supply_token": net_supply_token,
         "block_height": block,
-        "lending_index_rate": lending_index_rate
+        "lending_index_rate": "0"
     }
 
 
