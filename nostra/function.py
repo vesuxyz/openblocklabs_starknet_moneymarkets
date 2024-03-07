@@ -62,17 +62,18 @@ async def get_data(asset):
     market = asset["asset_address"]
     tokenSymbol = asset["asset_symbol"]
     block_height = await client.get_block_number()
-    supply_token_raw = (await get_supply(asset["i_token"], is_cairo_v2_implementation)) + (await get_supply(asset["i_token_c"], is_cairo_v2_implementation))
-    borrow_token_raw = await get_supply(asset["d_token"], is_cairo_v2_implementation)
+    lending_index_rate_raw = await get_index(asset["i_token"], is_cairo_v2_implementation, block_height)
+    non_recursive_supply_token_raw = get_non_recursive_supply(asset, lending_index_rate_raw)
+    supply_token_raw = (await get_supply(asset["i_token"], is_cairo_v2_implementation, block_height)) + (await get_supply(asset["i_token_c"], is_cairo_v2_implementation, block_height))
+    borrow_token_raw = await get_supply(asset["d_token"], is_cairo_v2_implementation, block_height)
     net_supply_token_raw = supply_token_raw - borrow_token_raw
-    lending_index_rate = await get_index(asset["i_token"], is_cairo_v2_implementation)
     
     # Normalize the balance fields
     supply_token = normalize(supply_token_raw, asset['decimals'])
     borrow_token = normalize(borrow_token_raw, asset['decimals'])
     net_supply_token = normalize(net_supply_token_raw, asset['decimals'])
-    non_recursive_supply_token_raw = get_non_recursive_supply(asset, lending_index_rate)
     non_recursive_supply_token = normalize(non_recursive_supply_token_raw, asset['decimals'])
+    lending_index_rate = normalize(lending_index_rate_raw, 18)
 
     return {
         "protocol": protocol,
@@ -84,25 +85,25 @@ async def get_data(asset):
         "borrow_token": borrow_token,
         "net_supply_token": net_supply_token,
         "non_recursive_supply_token": non_recursive_supply_token,
-        "lending_index_rate": normalize(lending_index_rate, 18)
+        "lending_index_rate": lending_index_rate
     }
 
 
 
-async def get_supply(address, is_cairo_v2_implementation):
+async def get_supply(address, is_cairo_v2_implementation, block_number):
     contract = await Contract.from_address(
         address=address,
         provider=client,
     )
-    (value,) = await contract.functions["total_supply" if is_cairo_v2_implementation else "totalSupply"].call()
+    (value,) = await contract.functions["total_supply" if is_cairo_v2_implementation else "totalSupply"].call(block_number=block_number)
     return value
 
-async def get_index(address, is_cairo_v2_implementation=False):
+async def get_index(address, is_cairo_v2_implementation, block_number):
     contract = await Contract.from_address(
         address=address,
         provider=client,
     )
-    (value,) = await contract.functions["token_index" if is_cairo_v2_implementation else "getTokenIndex"].call()
+    (value,) = await contract.functions["token_index" if is_cairo_v2_implementation else "getTokenIndex"].call(block_number=block_number)
     return value
 
 
