@@ -44,31 +44,31 @@ def get_today() -> str:
     formatted_date = datetime.now().strftime("%Y-%m-%d")
     return formatted_date
 
-async def get_supply(z_token_address: int) -> int:
+async def get_supply(z_token_address: int, block_number: int) -> int:
     contract = Contract(
         address=z_token_address,
         abi=Z_TOKEN_ABI,
         provider=client,
     )
-    (uint_face_value,) = await contract.functions["totalSupply"].call()
+    (uint_face_value,) = await contract.functions["totalSupply"].call(block_number=block_number)
     return uint_face_value
 
-async def get_debt(underlying_address: int) -> int:
+async def get_debt(underlying_address: int, block_number: int) -> int:
     contract = Contract(
         address=MARKET,
         abi=MARKET_ABI,
         provider=client,
     )
-    (uint_face_value,) = await contract.functions["get_total_debt_for_token"].call(underlying_address)
+    (uint_face_value,) = await contract.functions["get_total_debt_for_token"].call(underlying_address, block_number=block_number)
     return uint_face_value
 
-async def get_lending_accumulator(underlying_address: int) -> int:
+async def get_lending_accumulator(underlying_address: int, block_number: int) -> int:
     contract = Contract(
         address=MARKET,
         abi=MARKET_ABI,
         provider=client,
     )
-    (uint_value,) = await contract.functions["get_lending_accumulator"].call(underlying_address)
+    (uint_value,) = await contract.functions["get_lending_accumulator"].call(underlying_address, block_number=block_number)
     return uint_value
 
 async def main():
@@ -80,10 +80,10 @@ async def main():
 async def get_data(asset):
     z_token_int = int(asset["z_token"], 16)
     underlying_int = int(asset["underlying"], 16)
-    supply = await get_supply(z_token_int)
-    debt = await get_debt(underlying_int)
     block_height = await client.get_block_number()
-    lending_accumulator = await get_lending_accumulator(underlying_int)
+    supply = await get_supply(z_token_int, block_height)
+    debt = await get_debt(underlying_int, block_height)
+    lending_accumulator = await get_lending_accumulator(underlying_int, block_height)
     return {
         "protocol": "zkLend",
         "date": get_today(),
