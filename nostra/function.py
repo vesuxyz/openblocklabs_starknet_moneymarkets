@@ -39,18 +39,53 @@ ASSETS = [{
     "i_token_c": "0x0453c4c996f1047d9370f824d68145bd5e7ce12d00437140ad02181e1d11dc83",
     "d_token": "0x024e9b0d6bc79e111e6872bb1ada2a874c25712cf08dfc5bcf0de008a7cca55f",
 },
+{
+    "asset_symbol": "DAI",
+    "decimals": 18,
+    "asset_address": "0x00da114221cb83fa859dbdb4c44beeaa0bb37c7537ad5ae66fe5e0efd20e6eb3",
+    "i_token": "0x022ccca3a16c9ef0df7d56cbdccd8c4a6f98356dfd11abc61a112483b242db90",
+    "i_token_c": "0x04f18ffc850cdfa223a530d7246d3c6fc12a5969e0aa5d4a88f470f5fe6c46e9",
+    "d_token": "0x066037c083c33330a8460a65e4748ceec275bbf5f28aa71b686cbc0010e12597",
+},
 ]
 
 
 client = FullNodeClient(node_url=NODE_URL)
 
 async def main():
-    coroutines = [get_data(asset) for asset in ASSETS]
-    gathered_results = await asyncio.gather(*coroutines)
-    
-    df = pd.DataFrame(gathered_results)
-    df.to_csv('output_nostra.csv', index=False)
+    coroutines = [get_data(asset) for asset in ASSETS] + [get_stables_data()]
+    individual_results = await asyncio.gather(*coroutines)
 
+    # Continue to generate the DataFrame and CSV as before
+    df = pd.DataFrame(individual_results)
+    df.to_csv('output_nostra_with_stables.csv', index=False)
+
+
+async def get_stables_data():
+    dai_index = (await get_index("0x022ccca3a16c9ef0df7d56cbdccd8c4a6f98356dfd11abc61a112483b242db90", False)) / 1e18
+    usdc_index = (await get_index("0x002fc2d4b41cc1f03d185e6681cbd40cced61915d4891517a042658d61cba3b1", False)) / 1e18
+    usdt_index = (await get_index("0x0360f9786a6595137f84f2d6931aaec09ceec476a94a98dcad2bb092c6c06701", False)) / 1e18
+    
+    eth_price = await get_pragma_eth_price() / 1e18
+    dai_price = (await get_pragma_price("0x00da114221cb83fa859dbdb4c44beeaa0bb37c7537ad5ae66fe5e0efd20e6eb3")) / 1e18 * eth_price
+    usdc_price = (await get_pragma_price("0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8")) / 1e18 * eth_price
+    usdt_price = (await get_pragma_price("0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8")) / 1e18 * eth_price
+    stables_non_recursive_supply = await aggregate_stablecoins_non_recursive_supply(ASSETS, dai_index, usdc_index, usdt_index, dai_price, usdc_price, usdt_price)
+
+    block_height = await client.get_block_number()
+
+    return {
+        "protocol": "Nostra",
+        "date": datetime.now().strftime("%Y-%m-%d"),
+        "market": "0x0stable",
+        "tokenSymbol": "STB",
+        "block_height": block_height,
+        "supply_token": 0,
+        "borrow_token": 0,
+        "net_supply_token": 0,
+        "non_recursive_supply_token": stables_non_recursive_supply,
+        "lending_index_rate": 1.0
+    }
 
 def normalize(value, decimals):
     return value / (10 ** decimals)
@@ -103,6 +138,26 @@ async def get_index(address, is_cairo_v2_implementation=False):
         provider=client,
     )
     (value,) = await contract.functions["token_index" if is_cairo_v2_implementation else "getTokenIndex"].call()
+    return value
+
+
+async def get_pragma_eth_price():
+    # nostra oracle (uses pragma under the hood)
+    contract = await Contract.from_address(
+        address="0x683852789848dea686fcfb66aaebf6477d83b25d8894aae73b15ff19b765bf0",
+        provider=client,
+    )
+    (value,) = await contract.functions["getBaseAssetPriceInUsd"].call()
+    return value
+
+
+async def get_pragma_price(asset):
+    # nostra oracle (uses pragma under the hood)
+    contract = await Contract.from_address(
+        address="0x683852789848dea686fcfb66aaebf6477d83b25d8894aae73b15ff19b765bf0",
+        provider=client,
+    )
+    (value,) = await contract.functions["getAssetPrice"].call(int(asset, 16))
     return value
 
 
@@ -180,6 +235,119 @@ def aggregate_non_recursive_supply_without_index(asset):
     else:
         print(f"Error: {response.status_code}")
         raise Exception(f"Error: {response.status_code}")
+
+
+async def aggregate_stablecoins_non_recursive_supply(assets, dai_index, usdc_index, usdt_index, dai_price, usdc_price, usdt_price):
+    QUERY_ENDPOINT = 'https://us-east-2.aws.data.mongodb-api.com/app/data-yqlpb/endpoint/data/v1/action/aggregate'
+    DATA_SOURCE = 'nostra-production'
+    DB = 'prod-a-nostra-db'
+    COLLECTION = 'balances'
+    
+    stablecoin_addresses = {
+        "DAI": {
+            "i_token": "0x022ccca3a16c9ef0df7d56cbdccd8c4a6f98356dfd11abc61a112483b242db90",
+            "i_token_c": "0x04f18ffc850cdfa223a530d7246d3c6fc12a5969e0aa5d4a88f470f5fe6c46e9",
+            "d_token": "0x066037c083c33330a8460a65e4748ceec275bbf5f28aa71b686cbc0010e12597",
+        },
+        "USDC": {
+            "i_token": "0x002fc2d4b41cc1f03d185e6681cbd40cced61915d4891517a042658d61cba3b1",
+            "i_token_c": "0x05dcd26c25d9d8fd9fc860038dcb6e4d835e524eb8a85213a8cda5b7fff845f6",
+            "d_token": "0x063d69ae657bd2f40337c39bf35a870ac27ddf91e6623c2f52529db4c1619a51"
+        },
+        "USDT": {
+            "i_token": "0x0360f9786a6595137f84f2d6931aaec09ceec476a94a98dcad2bb092c6c06701",
+            "i_token_c": "0x0453c4c996f1047d9370f824d68145bd5e7ce12d00437140ad02181e1d11dc83",
+            "d_token": "0x024e9b0d6bc79e111e6872bb1ada2a874c25712cf08dfc5bcf0de008a7cca55f"
+        }
+    }
+
+    # Flatten the addresses to a single list for the $in query operator
+    token_addresses = [address for asset in stablecoin_addresses.values() for address in asset.values()]
+    
+    pipeline = [
+        {
+            "$match": {
+                "tokenAddress": {
+                    "$in": token_addresses
+                }
+            }
+        },
+        {
+            "$addFields": {
+                "dai_index": {"$toDecimal": dai_index},
+                "usdc_index": {"$toDecimal": usdc_index},
+                "usdt_index": {"$toDecimal": usdt_index},
+                "dai_price": {"$toDecimal": dai_price},
+                "usdc_price": {"$toDecimal": usdc_price},
+                "usdt_price": {"$toDecimal": usdt_price},
+            }
+        },
+        {
+            "$addFields": {
+                "supplyType": {
+                    "$switch": {
+                        "branches": [
+                            {"case": {"$in": ["$tokenAddress", [stablecoin_addresses["DAI"]["i_token"], stablecoin_addresses["USDC"]["i_token"], stablecoin_addresses["USDT"]["i_token"]]]}, "then": "i_token"},
+                            {"case": {"$in": ["$tokenAddress", [stablecoin_addresses["DAI"]["i_token_c"], stablecoin_addresses["USDC"]["i_token_c"], stablecoin_addresses["USDT"]["i_token_c"]]]}, "then": "i_token_c"}
+                        ],
+                        "default": "d_token"
+                    }
+                },
+                "normalizedBalance": {
+                    "$cond": {
+                        "if": {"$eq": ["$asset", "USDT"]},
+                        "then": {"$multiply": [{"$toDecimal": "$balanceWithoutIndex"}, "$usdt_index", "$usdt_price", 1e12]},
+                        "else": {
+                            "$cond": {
+                                "if": {"$eq": ["$asset", "USDC"]},
+                                "then": {"$multiply": [{"$toDecimal": "$balanceWithoutIndex"}, "$usdc_index", "$usdc_price", 1e12]},
+                                "else": {"$multiply": [{"$toDecimal": "$balanceWithoutIndex"}, "$dai_index", "$dai_price"]}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "$group": {
+                "_id": "$accountAddress",
+                "i_token_sum": {"$sum": {"$cond": [{"$eq": ["$supplyType", "i_token"]}, "$normalizedBalance", 0]}},
+                "i_token_c_sum": {"$sum": {"$cond": [{"$eq": ["$supplyType", "i_token_c"]}, "$normalizedBalance", 0]}},
+                "d_token_sum": {"$sum": {"$cond": [{"$eq": ["$supplyType", "d_token"]}, "$normalizedBalance", 0]}}
+            }
+        },
+        {
+            "$addFields": {
+                "non_recursive_supply": {
+                    "$max": [
+                        0,
+                        {"$subtract": [{"$add": ["$i_token_sum", "$i_token_c_sum"]}, "$d_token_sum"]}
+                    ]
+                }
+            }
+        },
+        {
+            "$group": {
+                "_id": None,
+                "total_non_recursive_supply": {"$sum": "$non_recursive_supply"}
+            }
+        }
+    ]
+
+    response = requests.post(QUERY_ENDPOINT, json={
+        "dataSource": DATA_SOURCE,
+        "database": DB,
+        "collection": COLLECTION,
+        "pipeline": pipeline
+    })
+
+    if response.status_code == 200:
+        data = response.json()["documents"][0]
+        return round(float(data["total_non_recursive_supply"]))
+    else:
+        print(f"Error: {response.status_code}")
+        raise Exception(f"Error: {response.status_code}")
+
 
 
 if __name__ == "__main__":
