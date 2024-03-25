@@ -36,12 +36,28 @@ async def get_token_info(tokenInfo, provider):
         "date": formatted_date,
         "market": tokenInfo["address"],
         "tokenSymbol": tokenInfo["name"],
-        "supply_token": total_assets,
-        "borrow_token": total_debt,
-        "net_supply_token": net_supply,
-        "non_recursive_supply_token": total_assets,
+        "supply_token": total_assets / 10 ** tokenInfo['decimals'],
+        "borrow_token": total_debt / 10 ** tokenInfo['decimals'],
+        "net_supply_token": net_supply / 10 ** tokenInfo['decimals'],
+        "non_recursive_supply_token": total_assets / 10 ** tokenInfo['decimals'],
         "block_height": block,
         "lending_index_rate": lending_rate/10**18
+    }
+
+def combine_stables(data):
+    stables = ['USDC', 'USDT', 'DAI']
+    print(data[2])
+    return {
+        "protocol": "Hashstack",
+        "date": data[0]['date'],
+        "market": "0x0stable",
+        "tokenSymbol": "STB",
+        "supply_token": sum([row['supply_token'] for row in data if row['tokenSymbol'] in stables ]),
+        "borrow_token": sum([row['borrow_token'] for row in data if row['tokenSymbol'] in stables ]),
+        "net_supply_token": sum([row['net_supply_token'] for row in data if row['tokenSymbol'] in stables ]),
+        "non_recursive_supply_token": sum([row['non_recursive_supply_token'] for row in data if row['tokenSymbol'] in stables ]),
+        "block_height": data[0]['block_height'],
+        "lending_index_rate": 1
     }
 
 # Define functions
@@ -58,6 +74,9 @@ async def main():
         coroutines = [get_token_info(tokenInfo, provider) for tokenInfo in tokens]
         gathered_results = await asyncio.gather(*coroutines)
         
+        stables_combined_row = combine_stables(gathered_results)
+        gathered_results.append(stables_combined_row)
+
         df = pd.DataFrame(gathered_results)
         df.to_csv('output_hashstack.csv', index=False)
 
