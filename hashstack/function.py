@@ -46,7 +46,6 @@ async def get_token_info(tokenInfo, provider):
 
 def combine_stables(data):
     stables = ['USDC', 'USDT', 'DAI']
-    print(data[2])
     return {
         "protocol": "Hashstack",
         "date": data[0]['date'],
