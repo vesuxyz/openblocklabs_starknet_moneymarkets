@@ -21,7 +21,7 @@ PAGINATION_SIZE = 1000
 
 ACCUMULATOR_DECIMALS = 27
 
-assets: List[Dict[str, Union[str, int]]] = [
+non_stables: List[Dict[str, Union[str, int]]] = [
     {
         "symbol": "STRK",
         "token_decimals": 18,
@@ -34,6 +34,8 @@ assets: List[Dict[str, Union[str, int]]] = [
         "underlying": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
         "z_token": "0x01b5bd713e72fdc5d63ffd83762f81297f6175a5e0a4771cdadbc1dd5fe72cb1",
     },
+]
+stables: List[Dict[str, Union[str, int]]] = [
     {
         "symbol": "USDC",
         "token_decimals": 6,
@@ -46,14 +48,18 @@ assets: List[Dict[str, Union[str, int]]] = [
         "underlying": "0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8",
         "z_token": "0x00811d8da5dc8a2206ea7fd0b28627c2d77280a515126e62baa4d78e22714c4a",
     },
+    {
+        "symbol": "DAI",
+        "token_decimals": 18,
+        "underlying": "0x00da114221cb83fa859dbdb4c44beeaa0bb37c7537ad5ae66fe5e0efd20e6eb3",
+        "z_token": "0x062fa7afe1ca2992f8d8015385a279f49fad36299754fb1e9866f4f052289376",
+    },
 ]
+stable_symbols = [asset["symbol"] for asset in stables]
 
 client = FullNodeClient(node_url=NODE_URL)
 
-
-def get_today() -> str:
-    formatted_date = datetime.now().strftime("%Y-%m-%d")
-    return formatted_date
+today = datetime.now().strftime("%Y-%m-%d")
 
 
 async def get_supply(z_token_address: int, block_number: int) -> int:
@@ -111,6 +117,51 @@ async def get_raw_balance_per_user(
 ) -> Dict[str, Dict[str, int]]:
     raw_balance_per_user = {}
     skip = 0
+
+    async def send_request(session, payload):
+        nonlocal raw_balance_per_user
+        nonlocal skip
+        async with session.post(
+            SUBGRAPH_URL, json=payload, headers={"Content-Type": "application/json"}
+        ) as response:
+            if response.status == 200:
+                data = await response.json()
+                if not "data" in data:
+                    print(f'Error: no "data" in {data}. Retrying...')
+                    await asyncio.sleep(5)
+                    return False
+                raw_supply_balances = data["data"]["ztokenRawBalances"]
+                raw_debt_balances = data["data"]["userRawDebts"]
+
+                if len(raw_supply_balances) == 0 and len(raw_debt_balances) == 0:
+                    return True
+                skip += PAGINATION_SIZE
+
+                for item in raw_supply_balances:
+                    raw_supply = item["raw_balance"]
+                    if item["user"] in raw_balance_per_user:
+                        raw_balance_per_user[item["user"]]["supply"] = int(raw_supply)
+                    else:
+                        raw_balance_per_user[item["user"]] = {
+                            "supply": int(raw_supply),
+                            "debt": 0,
+                        }
+                for item in raw_debt_balances:
+                    raw_debt = item["amount"]
+                    if item["user"] in raw_balance_per_user:
+                        raw_balance_per_user[item["user"]]["debt"] = int(raw_debt)
+                    else:
+                        raw_balance_per_user[item["user"]] = {
+                            "supply": 0,
+                            "debt": int(raw_debt),
+                        }
+
+                print(f"len(raw_balance_per_user): {len(raw_balance_per_user)}")
+            else:
+                print(f"Error: {response.status_code}.  Retrying...")
+                await asyncio.sleep(5)
+                return False
+
     async with aiohttp.ClientSession() as session:
         while True:
             payload = {
@@ -143,43 +194,9 @@ async def get_raw_balance_per_user(
                     }}
                 }}"""
             }
-            async with session.post(
-                SUBGRAPH_URL, json=payload, headers={"Content-Type": "application/json"}
-            ) as response:
-                if response.status == 200:
-                    data = await response.json()
-                    raw_supply_balances = data["data"]["ztokenRawBalances"]
-                    raw_debt_balances = data["data"]["userRawDebts"]
-
-                    if len(raw_supply_balances) == 0 and len(raw_debt_balances) == 0:
-                        break
-                    skip += PAGINATION_SIZE
-
-                    for item in raw_supply_balances:
-                        raw_supply = item["raw_balance"]
-                        if item["user"] in raw_balance_per_user:
-                            raw_balance_per_user[item["user"]]["supply"] = int(
-                                raw_supply
-                            )
-                        else:
-                            raw_balance_per_user[item["user"]] = {
-                                "supply": int(raw_supply),
-                                "debt": 0,
-                            }
-                    for item in raw_debt_balances:
-                        raw_debt = item["amount"]
-                        if item["user"] in raw_balance_per_user:
-                            raw_balance_per_user[item["user"]]["debt"] = int(raw_debt)
-                        else:
-                            raw_balance_per_user[item["user"]] = {
-                                "supply": 0,
-                                "debt": int(raw_debt),
-                            }
-
-                    print(f"len(raw_balance_per_user): {len(raw_balance_per_user)}")
-                else:
-                    print(f"Error: {response.status_code}")
-                    raise Exception(f"Error: {response.status_code}")
+            done = await send_request(session, payload)
+            if done:
+                break
 
     return raw_balance_per_user
 
@@ -209,17 +226,45 @@ def scale_down(value: int, decimals: int) -> Decimal:
     return Decimal(value) / Decimal(f"1e{decimals}")
 
 
+def remove_keys(obj, keys):
+    return {key: value for key, value in obj.items() if key not in keys}
+
+
 async def main():
-    a = [get_data(asset) for asset in assets]
-    results = await asyncio.gather(*a)
-    df = pd.DataFrame(results)
+    block_height = await client.get_block_number()
+
+    data = [get_data(asset, block_height) for asset in [*non_stables, *stables]]
+    result = await asyncio.gather(*data)
+    non_stables_result = []
+    stables_result = []
+    for asset in result:
+        if asset["tokenSymbol"] in stable_symbols:
+            stables_result.append(asset)
+        else:
+            non_stables_result.append(asset)
+    all_stables_result = get_all_stables_data(stables_result, block_height)
+
+    keys_to_remove = [
+        "raw_balance_per_user",
+        "lending_accumulator",
+        "debt_accumulator",
+        "token_decimals",
+    ]
+    cleaned = list(
+        map(
+            lambda obj: remove_keys(obj, keys_to_remove),
+            [*non_stables_result, *stables_result],
+        )
+    )
+    everything = [*cleaned, all_stables_result]
+
+    df = pd.DataFrame(everything)
     df.to_csv("output_zklend.csv", index=False)
 
 
-async def get_data(asset):
+async def get_data(asset, block_height):
     z_token_int = int(asset["z_token"], 16)
     underlying_int = int(asset["underlying"], 16)
-    block_height = await client.get_block_number()
 
     lending_accumulator = await get_lending_accumulator(underlying_int, block_height)
     debt_accumulator = await get_debt_accumulator(underlying_int, block_height)
@@ -235,7 +280,7 @@ async def get_data(asset):
 
     return {
         "protocol": "zkLend",
-        "date": get_today(),
+        "date": today,
         "market": asset["underlying"],
         "tokenSymbol": asset["symbol"],
         "supply_token": scale_down(supply, asset["token_decimals"]),
@@ -246,6 +291,69 @@ async def get_data(asset):
         ),
         "block_height": block_height,
         "lending_index_rate": scale_down(lending_accumulator, ACCUMULATOR_DECIMALS),
+        "raw_balance_per_user": raw_balance_per_user,
+        "lending_accumulator": lending_accumulator,
+        "debt_accumulator": debt_accumulator,
+        "token_decimals": asset["token_decimals"],
+    }
+
+
+def get_all_stables_data(assets, block_height):
+    stables_raw_balance_per_user = {}
+    stables_supply = 0
+    stables_debt = 0
+
+    for asset in assets:
+        for user, balances in asset["raw_balance_per_user"].items():
+            lending_accumulator = asset["lending_accumulator"]
+            debt_accumulator = asset["debt_accumulator"]
+
+            uint_face_value_supply = Decimal(balances["supply"]) * Decimal(
+                lending_accumulator
+            )
+            face_value_supply = scale_down(uint_face_value_supply, ACCUMULATOR_DECIMALS)
+            uint_face_value_debt = Decimal(balances["debt"]) * Decimal(debt_accumulator)
+            face_value_debt = scale_down(uint_face_value_debt, ACCUMULATOR_DECIMALS)
+
+            scaled_face_value_supply = scale_down(
+                face_value_supply, asset["token_decimals"]
+            )
+            scaled_face_value_debt = scale_down(
+                face_value_debt, asset["token_decimals"]
+            )
+
+            if user in stables_raw_balance_per_user:
+                stables_raw_balance_per_user[user]["supply"] += scaled_face_value_supply
+                stables_raw_balance_per_user[user]["debt"] += scaled_face_value_debt
+            else:
+                stables_raw_balance_per_user[user] = {
+                    "supply": scaled_face_value_supply,
+                    "debt": scaled_face_value_debt,
+                }
+
+        stables_supply += asset["supply_token"]
+        # asset["borrow_token"] is already negative
+        stables_debt += asset["borrow_token"]
+
+    stables_total_non_recursive_supply = Decimal(0)
+    for _, balances in stables_raw_balance_per_user.items():
+        non_recursive_supply_per_user = balances["supply"] - balances["debt"]
+        # If positive it adds to the cumulative sum, if negative it adds 0
+        if non_recursive_supply_per_user > 0:
+            stables_total_non_recursive_supply += non_recursive_supply_per_user
+
+    return {
+        "protocol": "zkLend",
+        "date": today,
+        "market": "0x0stable",
+        "tokenSymbol": "STB",
+        "supply_token": stables_supply,
+        "borrow_token": stables_debt,
+        # stables_debt is already negative
+        "net_supply_token": stables_supply + stables_debt,
+        "non_recursive_supply_token": stables_total_non_recursive_supply,
+        "block_height": block_height,
+        "lending_index_rate": 1,
     }
 
 
