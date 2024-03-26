@@ -51,26 +51,42 @@ ASSETS = [{
 
 
 client = FullNodeClient(node_url=NODE_URL)
-
 async def main():
-    coroutines = [get_data(asset) for asset in ASSETS] + [get_stables_data()]
+    eth_price = normalize(await get_pragma_eth_price(), 18)
+    dai_price = normalize(await get_pragma_price("0x00da114221cb83fa859dbdb4c44beeaa0bb37c7537ad5ae66fe5e0efd20e6eb3"), 18) * eth_price
+    usdc_price = normalize(await get_pragma_price("0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8"), 18) * eth_price
+    usdt_price = normalize(await get_pragma_price("0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8"), 18) * eth_price
+    
+    coroutines = [get_data(asset) for asset in ASSETS] + [get_stables_data(dai_price, usdc_price, usdt_price)]
     individual_results = await asyncio.gather(*coroutines)
 
-    # Continue to generate the DataFrame and CSV as before
+    # Generate the DataFrame
     df = pd.DataFrame(individual_results)
-    df.to_csv('output_nostra_with_stables.csv', index=False)
+
+    # Prices mapping
+    prices = {'DAI': dai_price, 'USDC': usdc_price, 'USDT': usdt_price}
+
+    # Calculate the sums directly, factoring in the prices
+    supply_token_sum = sum(df.loc[df['tokenSymbol'] == symbol, 'supply_token'].iloc[0] * price for symbol, price in prices.items())
+    borrow_token_sum = sum(df.loc[df['tokenSymbol'] == symbol, 'borrow_token'].iloc[0] * price for symbol, price in prices.items())
+    net_supply_token_sum = supply_token_sum - borrow_token_sum
+
+    # Update the 0x0stable/STB row
+    df.loc[df['tokenSymbol'] == 'STB', 'supply_token'] = supply_token_sum
+    df.loc[df['tokenSymbol'] == 'STB', 'borrow_token'] = borrow_token_sum
+    df.loc[df['tokenSymbol'] == 'STB', 'net_supply_token'] = net_supply_token_sum
+
+    # Write the updated DataFrame to a CSV
+    df.to_csv('output_nostra.csv', index=False)
 
 
-async def get_stables_data():
-    dai_index = (await get_index("0x022ccca3a16c9ef0df7d56cbdccd8c4a6f98356dfd11abc61a112483b242db90", False)) / 1e18
-    usdc_index = (await get_index("0x002fc2d4b41cc1f03d185e6681cbd40cced61915d4891517a042658d61cba3b1", False)) / 1e18
-    usdt_index = (await get_index("0x0360f9786a6595137f84f2d6931aaec09ceec476a94a98dcad2bb092c6c06701", False)) / 1e18
-    
-    eth_price = await get_pragma_eth_price() / 1e18
-    dai_price = (await get_pragma_price("0x00da114221cb83fa859dbdb4c44beeaa0bb37c7537ad5ae66fe5e0efd20e6eb3")) / 1e18 * eth_price
-    usdc_price = (await get_pragma_price("0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8")) / 1e18 * eth_price
-    usdt_price = (await get_pragma_price("0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8")) / 1e18 * eth_price
-    stables_non_recursive_supply = await aggregate_stablecoins_non_recursive_supply(ASSETS, dai_index, usdc_index, usdt_index, dai_price, usdc_price, usdt_price)
+
+async def get_stables_data(dai_price, usdc_price, usdt_price):
+    dai_index = normalize(await get_index("0x022ccca3a16c9ef0df7d56cbdccd8c4a6f98356dfd11abc61a112483b242db90", False), 18)
+    usdc_index = normalize(await get_index("0x002fc2d4b41cc1f03d185e6681cbd40cced61915d4891517a042658d61cba3b1", False), 18)
+    usdt_index = normalize(await get_index("0x0360f9786a6595137f84f2d6931aaec09ceec476a94a98dcad2bb092c6c06701", False), 18)
+
+    stables_non_recursive_supply = normalize(await aggregate_stablecoins_non_recursive_supply(ASSETS, dai_index, usdc_index, usdt_index, dai_price, usdc_price, usdt_price), 18)
 
     block_height = await client.get_block_number()
 
