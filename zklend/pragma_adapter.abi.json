@@ -1,0 +1,14 @@
+[
+  {
+    "inputs": [],
+    "name": "get_price",
+    "outputs": [
+      {
+        "name": "price",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
