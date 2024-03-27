@@ -47,24 +47,33 @@ ASSETS = [{
     "i_token_c": "0x04f18ffc850cdfa223a530d7246d3c6fc12a5969e0aa5d4a88f470f5fe6c46e9",
     "d_token": "0x066037c083c33330a8460a65e4748ceec275bbf5f28aa71b686cbc0010e12597",
 },
+{
+    "asset_symbol": "UNO",
+    "decimals": 18,
+    "asset_address": "0x0719b5092403233201aa822ce928bd4b551d0cdb071a724edd7dc5e5f57b7f34",
+    "i_token": "0x01325caf7c91ee415b8df721fb952fa88486a0fc250063eafddd5d3c67867ce7",
+    "i_token_c": "0x02a3a9d7bcecc6d3121e3b6180b73c7e8f4c5f81c35a90c8dd457a70a842b723",
+    "d_token": "0x04b036839a8769c04144cc47415c64b083a2b26e4a7daa53c07f6042a0d35792",
+},
 ]
 
 
 client = FullNodeClient(node_url=NODE_URL)
 async def main():
     eth_price = normalize(await get_pragma_eth_price(), 18)
-    dai_price = normalize(await get_pragma_price("0x00da114221cb83fa859dbdb4c44beeaa0bb37c7537ad5ae66fe5e0efd20e6eb3"), 18) * eth_price
-    usdc_price = normalize(await get_pragma_price("0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8"), 18) * eth_price
-    usdt_price = normalize(await get_pragma_price("0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8"), 18) * eth_price
+    dai_price = normalize(await get_pragma_price("0x683852789848dea686fcfb66aaebf6477d83b25d8894aae73b15ff19b765bf0", "0x00da114221cb83fa859dbdb4c44beeaa0bb37c7537ad5ae66fe5e0efd20e6eb3"), 18) * eth_price
+    usdc_price = normalize(await get_pragma_price("0x683852789848dea686fcfb66aaebf6477d83b25d8894aae73b15ff19b765bf0", "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8"), 18) * eth_price
+    usdt_price = normalize(await get_pragma_price("0x683852789848dea686fcfb66aaebf6477d83b25d8894aae73b15ff19b765bf0", "0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8"), 18) * eth_price
+    uno_price = normalize(await get_pragma_price("0x6661660c8201bf27c5799e819019e6e74914d5e9c6ed1458faeab403fc4b5c1", "0x0719b5092403233201aa822ce928bd4b551d0cdb071a724edd7dc5e5f57b7f34"), 18) * eth_price
     
-    coroutines = [get_data(asset) for asset in ASSETS] + [get_stables_data(dai_price, usdc_price, usdt_price)]
+    coroutines = [get_data(asset) for asset in ASSETS] + [get_stables_data(dai_price, usdc_price, usdt_price, uno_price)]
     individual_results = await asyncio.gather(*coroutines)
 
     # Generate the DataFrame
     df = pd.DataFrame(individual_results)
 
     # Prices mapping
-    prices = {'DAI': dai_price, 'USDC': usdc_price, 'USDT': usdt_price}
+    prices = {'DAI': dai_price, 'USDC': usdc_price, 'USDT': usdt_price, 'UNO': uno_price}
 
     # Calculate the sums directly, factoring in the prices
     supply_token_sum = sum(df.loc[df['tokenSymbol'] == symbol, 'supply_token'].iloc[0] * price for symbol, price in prices.items())
@@ -81,14 +90,15 @@ async def main():
 
 
 
-async def get_stables_data(dai_price, usdc_price, usdt_price):
-    dai_index = normalize(await get_index("0x022ccca3a16c9ef0df7d56cbdccd8c4a6f98356dfd11abc61a112483b242db90", False), 18)
-    usdc_index = normalize(await get_index("0x002fc2d4b41cc1f03d185e6681cbd40cced61915d4891517a042658d61cba3b1", False), 18)
-    usdt_index = normalize(await get_index("0x0360f9786a6595137f84f2d6931aaec09ceec476a94a98dcad2bb092c6c06701", False), 18)
-
-    stables_non_recursive_supply = normalize(await aggregate_stablecoins_non_recursive_supply(ASSETS, dai_index, usdc_index, usdt_index, dai_price, usdc_price, usdt_price), 18)
-
+async def get_stables_data(dai_price, usdc_price, usdt_price, uno_price):
     block_height = await client.get_block_number()
+    dai_index = normalize(await get_index("0x022ccca3a16c9ef0df7d56cbdccd8c4a6f98356dfd11abc61a112483b242db90", False, block_height), 18)
+    usdc_index = normalize(await get_index("0x002fc2d4b41cc1f03d185e6681cbd40cced61915d4891517a042658d61cba3b1", False, block_height), 18)
+    usdt_index = normalize(await get_index("0x0360f9786a6595137f84f2d6931aaec09ceec476a94a98dcad2bb092c6c06701", False, block_height), 18)
+    uno_index = normalize(await get_index("0x01325caf7c91ee415b8df721fb952fa88486a0fc250063eafddd5d3c67867ce7", True, block_height), 18)
+
+    stables_non_recursive_supply = normalize(await aggregate_stablecoins_non_recursive_supply(ASSETS, dai_index, usdc_index, usdt_index, uno_index, dai_price, usdc_price, usdt_price, uno_price), 18)
+
 
     return {
         "protocol": "Nostra",
@@ -107,7 +117,7 @@ def normalize(value, decimals):
     return value / (10 ** decimals)
 
 async def get_data(asset):
-    is_cairo_v2_implementation = asset['asset_symbol'] == "STRK"
+    is_cairo_v2_implementation = asset['asset_symbol'] == "STRK" or asset['asset_symbol'] == "UNO"
     protocol = "Nostra"
     formatted_date = datetime.now().strftime("%Y-%m-%d")
     market = asset["asset_address"]
@@ -168,10 +178,10 @@ async def get_pragma_eth_price():
     return value
 
 
-async def get_pragma_price(asset):
+async def get_pragma_price(oracle_address, asset):
     # nostra oracle (uses pragma under the hood)
     contract = await Contract.from_address(
-        address="0x683852789848dea686fcfb66aaebf6477d83b25d8894aae73b15ff19b765bf0",
+        address=oracle_address,
         provider=client,
     )
     (value,) = await contract.functions["getAssetPrice"].call(int(asset, 16))
@@ -254,7 +264,7 @@ def aggregate_non_recursive_supply_without_index(asset):
         raise Exception(f"Error: {response.status_code}")
 
 
-async def aggregate_stablecoins_non_recursive_supply(assets, dai_index, usdc_index, usdt_index, dai_price, usdc_price, usdt_price):
+async def aggregate_stablecoins_non_recursive_supply(assets, dai_index, usdc_index, usdt_index, uno_index, dai_price, usdc_price, usdt_price, uno_price):
     QUERY_ENDPOINT = 'https://us-east-2.aws.data.mongodb-api.com/app/data-yqlpb/endpoint/data/v1/action/aggregate'
     DATA_SOURCE = 'nostra-production'
     DB = 'prod-a-nostra-db'
@@ -275,6 +285,11 @@ async def aggregate_stablecoins_non_recursive_supply(assets, dai_index, usdc_ind
             "i_token": "0x0360f9786a6595137f84f2d6931aaec09ceec476a94a98dcad2bb092c6c06701",
             "i_token_c": "0x0453c4c996f1047d9370f824d68145bd5e7ce12d00437140ad02181e1d11dc83",
             "d_token": "0x024e9b0d6bc79e111e6872bb1ada2a874c25712cf08dfc5bcf0de008a7cca55f"
+        },
+        "UNO": {
+            "i_token": "0x01325caf7c91ee415b8df721fb952fa88486a0fc250063eafddd5d3c67867ce7",
+            "i_token_c": "0x02a3a9d7bcecc6d3121e3b6180b73c7e8f4c5f81c35a90c8dd457a70a842b723",
+            "d_token": "0x04b036839a8769c04144cc47415c64b083a2b26e4a7daa53c07f6042a0d35792"
         }
     }
 
@@ -294,9 +309,11 @@ async def aggregate_stablecoins_non_recursive_supply(assets, dai_index, usdc_ind
                 "dai_index": {"$toDecimal": dai_index},
                 "usdc_index": {"$toDecimal": usdc_index},
                 "usdt_index": {"$toDecimal": usdt_index},
+                "uno_index": {"$toDecimal": uno_index},
                 "dai_price": {"$toDecimal": dai_price},
                 "usdc_price": {"$toDecimal": usdc_price},
                 "usdt_price": {"$toDecimal": usdt_price},
+                "uno_price": {"$toDecimal": uno_price},
             }
         },
         {
@@ -304,8 +321,8 @@ async def aggregate_stablecoins_non_recursive_supply(assets, dai_index, usdc_ind
                 "supplyType": {
                     "$switch": {
                         "branches": [
-                            {"case": {"$in": ["$tokenAddress", [stablecoin_addresses["DAI"]["i_token"], stablecoin_addresses["USDC"]["i_token"], stablecoin_addresses["USDT"]["i_token"]]]}, "then": "i_token"},
-                            {"case": {"$in": ["$tokenAddress", [stablecoin_addresses["DAI"]["i_token_c"], stablecoin_addresses["USDC"]["i_token_c"], stablecoin_addresses["USDT"]["i_token_c"]]]}, "then": "i_token_c"}
+                            {"case": {"$in": ["$tokenAddress", [stablecoin_addresses["DAI"]["i_token"], stablecoin_addresses["USDC"]["i_token"], stablecoin_addresses["USDT"]["i_token"], stablecoin_addresses["UNO"]["i_token"]]]}, "then": "i_token"},
+                            {"case": {"$in": ["$tokenAddress", [stablecoin_addresses["DAI"]["i_token_c"], stablecoin_addresses["USDC"]["i_token_c"], stablecoin_addresses["USDT"]["i_token_c"], stablecoin_addresses["UNO"]["i_token_c"]]]}, "then": "i_token_c"}
                         ],
                         "default": "d_token"
                     }
@@ -318,7 +335,13 @@ async def aggregate_stablecoins_non_recursive_supply(assets, dai_index, usdc_ind
                             "$cond": {
                                 "if": {"$eq": ["$asset", "USDC"]},
                                 "then": {"$multiply": [{"$toDecimal": "$balanceWithoutIndex"}, "$usdc_index", "$usdc_price", 1e12]},
-                                "else": {"$multiply": [{"$toDecimal": "$balanceWithoutIndex"}, "$dai_index", "$dai_price"]}
+                                "else": {
+                                    "$cond": {
+                                        "if": {"$eq": ["$asset", "DAI"]},
+                                        "then": {"$multiply": [{"$toDecimal": "$balanceWithoutIndex"}, "$dai_index", "$dai_price"]},
+                                        "else": {"$multiply": [{"$toDecimal": "$balanceWithoutIndex"}, "$uno_index", "$uno_price"]}
+                                    }
+                                }
                             }
                         }
                     }
