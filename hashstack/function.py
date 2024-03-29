@@ -9,6 +9,7 @@ from collections import OrderedDict
 rTokenAbi = json.load(open('./hashstack/rToken.abi.json'))
 dTokenAbi = json.load(open('./hashstack/dToken.abi.json'))
 
+ORACLE_ADDRESS = '0x683852789848dea686fcfb66aaebf6477d83b25d8894aae73b15ff19b765bf0'
 # Returns row for each token
 # Contains supply and lending index
 async def get_token_info(tokenInfo, provider):
@@ -44,17 +45,45 @@ async def get_token_info(tokenInfo, provider):
         "lending_index_rate": lending_rate/10**18
     }
 
-def combine_stables(data):
+def normalize(value, decimals):
+    return value / (10 ** decimals)
+
+async def get_pragma_eth_price(client):
+    # nostra oracle (uses pragma under the hood)
+    contract = await Contract.from_address(
+        address=ORACLE_ADDRESS,
+        provider=client,
+    )
+    (value,) = await contract.functions["getBaseAssetPriceInUsd"].call()
+    return value
+
+async def get_pragma_price(asset, client):
+    # nostra oracle (uses pragma under the hood)
+    contract = await Contract.from_address(
+        address=ORACLE_ADDRESS,
+        provider=client,
+    )
+    (value,) = await contract.functions["getAssetPrice"].call(int(asset, 16))
+    return value
+
+async def combine_stables(data, client):
     stables = ['USDC', 'USDT', 'DAI']
+    eth_price = normalize(await get_pragma_eth_price(client), 18)
+    usdt_price = normalize(await get_pragma_price("0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8", client), 18) * eth_price
+    usdc_price = normalize(await get_pragma_price("0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8", client), 18) * eth_price
+    dai_price = normalize(await get_pragma_price("0x00da114221cb83fa859dbdb4c44beeaa0bb37c7537ad5ae66fe5e0efd20e6eb3", client), 18) * eth_price
+    
+    print(eth_price, usdc_price, usdt_price, dai_price)
+    prices = {'DAI': dai_price, 'USDC': usdc_price, 'USDT': usdt_price}
     return {
         "protocol": "Hashstack",
         "date": data[0]['date'],
         "market": "0x0stable",
         "tokenSymbol": "STB",
-        "supply_token": sum([row['supply_token'] for row in data if row['tokenSymbol'] in stables ]),
-        "borrow_token": sum([row['borrow_token'] for row in data if row['tokenSymbol'] in stables ]),
-        "net_supply_token": sum([row['net_supply_token'] for row in data if row['tokenSymbol'] in stables ]),
-        "non_recursive_supply_token": sum([row['non_recursive_supply_token'] for row in data if row['tokenSymbol'] in stables ]),
+        "supply_token": sum([row['supply_token'] * prices[row['tokenSymbol']] for row in data if row['tokenSymbol'] in stables ]),
+        "borrow_token": sum([row['borrow_token'] * prices[row['tokenSymbol']] for row in data if row['tokenSymbol'] in stables ]),
+        "net_supply_token": sum([row['net_supply_token'] * prices[row['tokenSymbol']] for row in data if row['tokenSymbol'] in stables ]),
+        "non_recursive_supply_token": sum([row['non_recursive_supply_token'] * prices[row['tokenSymbol']] for row in data if row['tokenSymbol'] in stables ]),
         "block_height": data[0]['block_height'],
         "lending_index_rate": 1
     }
@@ -73,7 +102,7 @@ async def main():
         coroutines = [get_token_info(tokenInfo, provider) for tokenInfo in tokens]
         gathered_results = await asyncio.gather(*coroutines)
         
-        stables_combined_row = combine_stables(gathered_results)
+        stables_combined_row = await combine_stables(gathered_results, provider)
         gathered_results.append(stables_combined_row)
 
         df = pd.DataFrame(gathered_results)
