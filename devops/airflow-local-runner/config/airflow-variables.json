@@ -1,0 +1,10 @@
+{
+  "ecs_network_configurations": {
+      "awsvpcConfiguration": {
+          "assignPublicIp": "ENABLED",
+          "securityGroups": "sg-044c68901bdc6fd33",
+          "subnets": ["subnet-004424305469dedce"]
+      }
+  },
+  "environment": "prod"
+}
