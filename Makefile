@@ -9,7 +9,7 @@ build_image:
 	docker build --platform linux/arm64 -t ${DOCKER_IMAGE_NAME} -f devops/ecs/Dockerfile .
 
 setup_airflow_locally:
-	cd ../../devops/airflow-local-runner && docker compose up -d && ./config/setup_aws_connection.sh
+	cd ./devops/airflow-local-runner && docker compose up -d && ./config/setup_aws_connection.sh
 
 login_ecr_docker_registry:
 	aws ecr get-login-password --region ${AWS_REGION} | \
