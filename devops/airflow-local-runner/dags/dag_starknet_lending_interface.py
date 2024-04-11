@@ -35,7 +35,7 @@ LOG_GROUP = f"/ecs/log-group-{PROJECT_NAME}-{ENV}"
 with DAG(
     dag_id=f"dag_{CHAIN}_{TYPE}_interface",
     default_args=ARGS,
-    schedule_interval="0 0 * * *", # daily, "0 * * * *" = hourly
+    schedule_interval="0 2 * * *", # daily, "0 * * * *" = hourly
     tags=[CHAIN],
     catchup=False,
     max_active_runs=1,
