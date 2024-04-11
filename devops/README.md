@@ -8,6 +8,11 @@ To deploy this project in dev environment is necessary to execute these steps:
 * Build the docker image
 * Start Airflow locally
 
+#### Initialize Terraform
+
+```
+make initialize_terraform
+```
 #### Create ECS Stack on dev Workspace
 
 ```
