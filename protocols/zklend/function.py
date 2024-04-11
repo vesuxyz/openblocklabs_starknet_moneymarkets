@@ -450,88 +450,53 @@ if __name__ == "__main__":
     df1 = grant_scores_df[grant_scores_df["date"] == grant_scores_df["date"].max()]
 
     # Sort DataFrames
-    df = (
-        df[df.tokenSymbol.isin(["STRK", "ETH", "USDT", "USDC"])]
-        .sort_values("tokenSymbol", ascending=True)
-        .reset_index(drop=True)
-    )
-    df1 = (
-        df1[df1.tokenSymbol.isin(["STRK", "ETH", "USDT", "USDC"])]
-        .sort_values("tokenSymbol", ascending=True)
-        .reset_index(drop=True)
-    )
+    df = df[df.tokenSymbol.isin(['STRK', 'ETH', 'USDT', 'USDC','DAI', 'STB'])].sort_values(
+        'tokenSymbol', ascending=True).reset_index(drop=True)
+    df1 = df1[df1.tokenSymbol.isin(['STRK', 'ETH', 'USDT', 'USDC','DAI', 'STB'])].sort_values(
+        'tokenSymbol', ascending=True).reset_index(drop=True)
 
     prices_df = get_athena_prices_hourly()
     strk_prices_df = get_snowflake_strk_prices_hourly()
 
+    # Create lists
+    stables_list = ['DAI', 'USDC', 'USDT']
+    stables_list_stb = ['DAI', 'USDC', 'USDT', 'STB']
+    non_stables_list = ['ETH', 'STRK', 'STB']
+    non_stables_list_stb = ['ETH', 'STRK']
+
     # Assuming strk_prices_df is already defined and contains 'timestamp' in microseconds
-    strk_prices_df["timestamp"] = pd.to_datetime(strk_prices_df["timestamp"], unit="us")
+    strk_prices_df['timestamp'] = pd.to_datetime(strk_prices_df['timestamp'], unit='us')
 
     # Round timestamps to the nearest hour
-    strk_prices_df["timestamp"] = strk_prices_df["timestamp"].dt.round("H")
+    strk_prices_df['timestamp'] = strk_prices_df['timestamp'].dt.round('H')
 
-    # Keep only the last hour
-    # strk_prices_df = strk_prices_df[strk_prices_df.timestamp==next_date]
-    strk_prices_df = strk_prices_df[
-        strk_prices_df.timestamp == strk_prices_df.timestamp.max()
-    ]
+    # Keep only the last hour 
+    #strk_prices_df = strk_prices_df[strk_prices_df.timestamp==next_date]
+    strk_prices_df = strk_prices_df[strk_prices_df.timestamp==strk_prices_df.timestamp.max()]
     # Assuming prices_df is already defined and ready to be concatenated with strk_prices_df
     # Concatenate the dataframes
     prices_df = pd.concat([strk_prices_df, prices_df])
 
+    # Add a row for STB
+    nr1 = {'symbol': 'STB','timestamp' : pd.to_datetime('2024-03-15'), 'price' : 1}
+    prices_df.loc[len(prices_df)] = nr1
+
     # Verify that all prices are present
-    assert prices_df.shape[0] == 4
+    assert (prices_df.shape[0] == 6)
 
     # Merge decimals and prices
     token_data = {
-        "tokenSymbol": ["ETH", "USDT", "USDC", "STRK"],
-        "l1Address": [
-            "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
-            "0xdac17f958d2ee523a2206206994597c13d831ec7",
-            "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-            "0xCa14007Eff0dB1f8135f4C25B34De49AB0d42766",
-        ],
-        "starknetAddressWith0s": [
-            "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
-            "0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8",
-            "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
-            "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
-        ],
-        "starknetAddress": [
-            "0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
-            "0x68f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8",
-            "0x53c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
-            "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
-        ],
-        "decimals": [18, 6, 6, 18],
+        'tokenSymbol': ['ETH', 'USDT', 'USDC', 'STRK', 'DAI', 'STB'],
+        'l1Address': ['0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', '0xdac17f958d2ee523a2206206994597c13d831ec7', '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', '0xCa14007Eff0dB1f8135f4C25B34De49AB0d42766','0x6b175474e89094c44da98b954eedeac495271d0f', '0xnastb'],
+        'starknetAddressWith0s': ['0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7', '0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8', '0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8', '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d', '0x00da114221cb83fa859dbdb4c44beeaa0bb37c7537ad5ae66fe5e0efd20e6eb3','0x0stable'],
+        'starknetAddress': ['0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7', '0x68f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8', '0x53c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8', '0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d','0xda114221cb83fa859dbdb4c44beeaa0bb37c7537ad5ae66fe5e0efd20e6eb3','0xstable'],
+        'decimals': [18, 6, 6, 18, 18, 1]
     }
     token_list_df = pd.DataFrame(token_data)
 
-    final_balances = (
-        pd.merge(
-            df,
-            token_list_df[["starknetAddressWith0s", "decimals"]],
-            left_on="market",
-            right_on="starknetAddressWith0s",
-            how="left",
-        )
-        .dropna()
-        .drop(columns="starknetAddressWith0s")
-    )
-    final_balances = (
-        pd.merge(
-            final_balances,
-            prices_df,
-            left_on="tokenSymbol",
-            right_on="symbol",
-            how="left",
-        )
-        .dropna()
-        .drop(columns=["symbol", "timestamp"])
-    )
-    final_balances = final_balances.sort_values(
-        "tokenSymbol", ascending=True
-    ).reset_index(drop=True)
+    final_balances = pd.merge(df, token_list_df[['starknetAddressWith0s', 'decimals']], left_on='market', right_on='starknetAddressWith0s', how='left').dropna().drop(columns='starknetAddressWith0s')
+    final_balances = pd.merge(final_balances, prices_df, left_on='tokenSymbol', right_on='symbol', how='left').dropna().drop(columns=['symbol','timestamp'])
+    final_balances = final_balances.sort_values('tokenSymbol', ascending=True).reset_index(drop=True)
 
     # Calculate Supplier Revenue and normalize token balances
     final_balances['lending_index_rate'] = final_balances['lending_index_rate'].astype(float)
@@ -539,7 +504,7 @@ if __name__ == "__main__":
     final_balances['borrow_token'] = -final_balances['borrow_token'].astype(float)
     final_balances['net_supply_token'] = final_balances['net_supply_token'].astype(float)
     final_balances['non_recursive_supply_token'] = final_balances['non_recursive_supply_token'].astype(float)
-    final_balances['non_recursive_supplier_revenue_total_token'] = ((final_balances['lending_index_rate'] / df1['lending_index_rate']) - 1) * final_balances['non_recursive_supply_token']
+    final_balances['non_recursive_supplier_revenue_total_token'] = ((final_balances['lending_index_rate'] / df1['lending_index_rate'].astype(float)) - 1) * final_balances['non_recursive_supply_token']
     final_balances['non_recursive_supplier_revenue_total_token'] = final_balances['non_recursive_supplier_revenue_total_token'].astype(float)
 
     # Calculate USD equivalent values
@@ -549,10 +514,12 @@ if __name__ == "__main__":
     final_balances['non_recursive_supply'] = final_balances['non_recursive_supply_token'] * final_balances['price']
     final_balances['non_recursive_supplier_revenue_total'] = final_balances['non_recursive_supplier_revenue_total_token'] * final_balances['price']
     final_balances['etl_timestamp'] = (datetime.now(timezone.utc)).strftime("%Y-%m-%d %H:%M:%S")
+    final_balances.loc[final_balances.tokenSymbol =='STB','non_recursive_supplier_revenue_total'] = final_balances.loc[final_balances.tokenSymbol.isin(stables_list),'non_recursive_supplier_revenue_total'].sum()
+    final_balances.loc[final_balances.tokenSymbol =='STB','non_recursive_supplier_revenue_total_token'] = final_balances.loc[final_balances.tokenSymbol =='STB','non_recursive_supplier_revenue_total'].copy()
     protocol_scores_final = final_balances.drop(columns=['decimals']).sort_values('tokenSymbol', ascending=True).reset_index(drop=True)
 
     # Verify that all protocol scores are present
-    assert (protocol_scores_final.shape[0] == 4)
+    assert (protocol_scores_final.shape[0] == 6)
 
     # Check results
     # First Order Check
