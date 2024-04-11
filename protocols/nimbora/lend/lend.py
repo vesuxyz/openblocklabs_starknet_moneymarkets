@@ -1,13 +1,11 @@
 import asyncio
 import json
-from pandas import DataFrame
 from starknet_py.contract import Contract
 from starknet_py.net.full_node_client import FullNodeClient
 from datetime import datetime
 import pandas as pd
-from collections import OrderedDict
 
-mTokenAbi = json.load(open('./nimbora/lend/mToken.abi.json'))
+mTokenAbi = json.load(open('./protocols/nimbora/lend/mToken.abi.json'))
 
 # Returns row for each token
 # Contains supply and lending index
@@ -49,7 +47,7 @@ async def main():
     node_url = "https://starknet-mainnet.public.blastapi.io"
     provider = FullNodeClient(node_url=node_url)
 
-    with open('./nimbora/lend/tokens.json', 'r') as f:
+    with open('./protocols/nimbora/lend/tokens.json', 'r') as f:
         tokens = json.load(f)
         coroutines = [get_token_info(tokenInfo, provider)
                       for tokenInfo in tokens]
@@ -58,7 +56,7 @@ async def main():
         df = pd.DataFrame(gathered_results)
         df.to_csv('output_nimbora_lend.csv', index=False)
 
-        return gathered_results
+        return df
 
 if __name__ == "__main__":
     asyncio.run(main())
