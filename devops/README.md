@@ -44,6 +44,14 @@ The DAG file is in the folder devops/airflow-local-runner/dags and after running
 
 Now the DAG it's available and you can run it.
 
+## Run locally with Docker
+
+```
+ docker build --platform=linux/amd64 -t starknet-openblocklabs/starknet-lending-interface-dev -f devops/ecs/Dockerfile .
+```
+```
+docker run -e ENV=dev -e AWS_ACCESS_KEY_ID={INSERT KEY} -e AWS_SECRET_ACCESS_KEY={INSERT KEY} -e AWS_DEFAULT_REGION=us-east-1 -it starknet-openblocklabs/starknet-lending-interface-dev /bin/bash
+```
 ## How to deploy this project in production environment?
 
 To deploy this project in production environment is necessary to execute these steps:
