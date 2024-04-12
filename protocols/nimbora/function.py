@@ -105,7 +105,7 @@ if __name__ == "__main__":
     # Concatenate the dataframes
     prices_df = pd.concat([strk_prices_df, prices_df])
 
-    assert prices_df.shape[0] == 4
+    assert prices_df.shape[0] == 5
 
     # Merge decimals and prices
     token_data = {
