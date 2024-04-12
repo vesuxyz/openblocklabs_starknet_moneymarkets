@@ -145,6 +145,20 @@ data "aws_iam_policy_document" "ecs_task_execution_role" {
   }
 
   statement {
+    sid = "AthenaAccess"
+    actions = [
+      "athena:StartQueryExecution",
+      "athena:GetQueryResults",
+      "athena:GetWorkGroup",
+      "athena:StopQueryExecution",
+      "athena:GetQueryExecution",
+      "athena:ListQueryExecutions",
+    ]
+    effect    = "Allow"
+    resources = ["*"]
+  }
+
+  statement {
     sid = "S3Access"
     actions = [
       "s3:ListBucket",
