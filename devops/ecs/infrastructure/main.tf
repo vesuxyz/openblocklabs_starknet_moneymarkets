@@ -177,6 +177,8 @@ data "aws_iam_policy_document" "ecs_task_execution_role" {
       "arn:aws:s3:::mode-openblocklabs/*",
       "arn:aws:s3:::sui-openblocklabs",
       "arn:aws:s3:::sui-openblocklabs/*",
+      "arn:aws:s3:::aws-athena-query-results-us-east-1-522495932155",
+      "arn:aws:s3:::aws-athena-query-results-us-east-1-522495932155/*"
     ]
   }
 }
