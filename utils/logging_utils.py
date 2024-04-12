@@ -1,5 +1,5 @@
 import logging
 
 def print_and_log(message: str):
-    print(logging.info(message))
+    print(message)
     logging.info(message)
