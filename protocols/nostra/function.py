@@ -717,9 +717,9 @@ if __name__ == "__main__":
 
     # Keep only the last hour 
     #strk_prices_df = strk_prices_df[strk_prices_df.timestamp==next_date]
-    strk_prices_df = strk_prices_df[strk_prices_df.timestamp==strk_prices_df.timestamp.max()]
+    strk_prices_df = strk_prices_df[strk_prices_df.timestamp==strk_prices_df.timestamp.max()].drop_duplicates()
     #uno_prices_df = uno_prices_df[uno_prices_df.timestamp==next_date]
-    uno_prices_df = uno_prices_df[uno_prices_df.timestamp==uno_prices_df.timestamp.max()]
+    uno_prices_df = uno_prices_df[uno_prices_df.timestamp==uno_prices_df.timestamp.max()].drop_duplicates()
 
     # Assuming prices_df is already defined and ready to be concatenated with strk_prices_df
     # Concatenate the dataframes
