@@ -73,6 +73,7 @@ def query_snowflake(snowflake_connection: SnowflakeConnection, query: str) -> pd
     return df
 
 def get_snowflake_strk_prices_hourly():
+    conn = create_snowflake_connection()
     query = """
     SELECT DISTINCT
         'STRK' AS symbol,
@@ -80,4 +81,4 @@ def get_snowflake_strk_prices_hourly():
         price
     FROM OBL_STARKNET_DW.STARKNET.STRK_PRICES_HOURLY
     """
-    return query_snowflake(query)
+    return query_snowflake(conn, query)
