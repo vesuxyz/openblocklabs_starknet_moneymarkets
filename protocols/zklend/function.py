@@ -455,7 +455,7 @@ if __name__ == "__main__":
     df1 = df1[df1.tokenSymbol.isin(['STRK', 'ETH', 'USDT', 'USDC','DAI', 'STB'])].sort_values(
         'tokenSymbol', ascending=True).reset_index(drop=True)
 
-    prices_df = get_athena_prices_hourly()
+    prices_df = get_athena_prices_hourly(next_date)    
     strk_prices_df = get_snowflake_strk_prices_hourly()
 
     # Create lists

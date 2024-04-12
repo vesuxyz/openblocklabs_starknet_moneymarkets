@@ -88,7 +88,7 @@ if __name__ == "__main__":
         .reset_index(drop=True)
     )
 
-    prices_df = get_athena_prices_hourly()
+    prices_df = get_athena_prices_hourly(next_date)    
     strk_prices_df = get_snowflake_strk_prices_hourly()
 
     strk_prices_df["timestamp"] = pd.to_datetime(strk_prices_df["timestamp"], unit="us")

@@ -237,7 +237,7 @@ if __name__ == "__main__":
     non_stables_list = ['ETH', 'STRK', 'STB']
     non_stables_list_stb = ['ETH', 'STRK']
 
-    prices_df = get_athena_prices_hourly()
+    prices_df = get_athena_prices_hourly(next_date)    
     strk_prices_df = get_snowflake_strk_prices_hourly()
 
     # Assuming strk_prices_df is already defined and contains 'timestamp' in microseconds

@@ -15,12 +15,12 @@ def query_athena(query: str, database: str):
         )
     return df
 
-def get_athena_prices_hourly():
-    query = """
+def get_athena_prices_hourly(next_date):
+    query = f"""
     SELECT * 
     FROM sui.token_prices_hourly 
     WHERE symbol IN ('ETH', 'USDC', 'USDT', 'DAI')
-    AND timestamp = TIMESTAMP '{{ next_date | sqlsafe}}'
+    AND timestamp = TIMESTAMP '{next_date}'
     """
     return query_athena(query, "sui")
 
