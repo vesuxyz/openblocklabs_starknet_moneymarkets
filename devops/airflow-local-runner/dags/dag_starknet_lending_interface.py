@@ -23,7 +23,7 @@ ARGS = {
 
 CHAIN = "starknet"
 TYPE = "lending" # dex, perps, moneymarkets
-PROTOCOLS = ["haskstack", "nimbora", "nostra", "zklend"] # list of participating protocols/folders
+PROTOCOLS = ["hashstack", "nimbora", "nostra", "zklend"] # list of participating protocols/folders
 
 ENV = Variable.get("environment")
 PROJECT_NAME = f"{CHAIN}-{TYPE}-interface"
