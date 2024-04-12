@@ -175,6 +175,8 @@ data "aws_iam_policy_document" "ecs_task_execution_role" {
       "arn:aws:s3:::starknet-openblocklabs/*",
       "arn:aws:s3:::mode-openblocklabs",
       "arn:aws:s3:::mode-openblocklabs/*",
+      "arn:aws:s3:::sui-openblocklabs",
+      "arn:aws:s3:::sui-openblocklabs/*",
     ]
   }
 }
