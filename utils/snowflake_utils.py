@@ -76,9 +76,9 @@ def get_snowflake_strk_prices_hourly():
     conn = create_snowflake_connection()
     query = """
     SELECT DISTINCT
-        'STRK' AS symbol,
-        timestamp,
-        price
+        'STRK' AS "symbol",
+        timestamp as "timestamp",
+        price as "price"
     FROM OBL_STARKNET_DW.STARKNET.STRK_PRICES_HOURLY
     """
     return query_snowflake(conn, query)
