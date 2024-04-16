@@ -15,8 +15,8 @@ PROTOCOL = "nimbora"
 BUCKET = "starknet-openblocklabs"
 S3_FILEPATH = f"grant_scores_lending_test/grant_scores_lending_{PROTOCOL}.parquet"
 
-token_manager_abi = json.load(open('./protocols/nimbora/borrow/TroveManager.abi.json'))
-price_feed_abi = json.load(open('./protocols/nimbora/borrow/PriceFeed.abi.json'))
+token_manager_abi = json.load(open('./openblocklabs_starknet_moneymarkets/protocols/nimbora/borrow/TroveManager.abi.json'))
+price_feed_abi = json.load(open('./openblocklabs_starknet_moneymarkets/protocols/nimbora/borrow/PriceFeed.abi.json'))
 
 trove_manager_address = "0xA39739EF8b0231DbFA0DcdA07d7e29faAbCf4bb2"
 price_feed_address = "0x4c517D4e2C851CA76d7eC94B805269Df0f2201De"
@@ -84,14 +84,13 @@ async def main():
     node_url = "https://mainnet.infura.io/v3/78d3a5f0971b4203b3f5cc1b4d2d2f09"
     provider = Web3(Web3.HTTPProvider(node_url))
 
-    with open('./protocols/nimbora/borrow/tokens.json', 'r') as f:
+    with open('./openblocklabs_starknet_moneymarkets/protocols/nimbora/borrow/tokens.json', 'r') as f:
         tokens = json.load(f)
         coroutines = [get_token_info(tokenInfo, provider)
                       for tokenInfo in tokens]
         gathered_results = await asyncio.gather(*coroutines)
 
         df = pd.DataFrame(gathered_results)
-        df.to_csv('output_nimbora_borrow.csv', index=False)
 
         return df
 

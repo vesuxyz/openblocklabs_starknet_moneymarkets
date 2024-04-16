@@ -5,7 +5,7 @@ from starknet_py.net.full_node_client import FullNodeClient
 from datetime import datetime
 import pandas as pd
 
-mTokenAbi = json.load(open('./protocols/nimbora/lend/mToken.abi.json'))
+mTokenAbi = json.load(open('./openblocklabs_starknet_moneymarkets/protocols/nimbora/lend/mToken.abi.json'))
 
 # Returns row for each token
 # Contains supply and lending index
@@ -47,14 +47,13 @@ async def main():
     node_url = "https://starknet-mainnet.public.blastapi.io"
     provider = FullNodeClient(node_url=node_url)
 
-    with open('./protocols/nimbora/lend/tokens.json', 'r') as f:
+    with open('./openblocklabs_starknet_moneymarkets/protocols/nimbora/lend/tokens.json', 'r') as f:
         tokens = json.load(f)
         coroutines = [get_token_info(tokenInfo, provider)
                       for tokenInfo in tokens]
         gathered_results = await asyncio.gather(*coroutines)
 
         df = pd.DataFrame(gathered_results)
-        df.to_csv('output_nimbora_lend.csv', index=False)
 
         return df
 
