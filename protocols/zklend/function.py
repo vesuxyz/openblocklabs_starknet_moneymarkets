@@ -132,17 +132,20 @@ async def get_pragma_price(adapter_address: int, block_number: int) -> int:
     return uint_value
 
 
-# This function iterates through all the raw balances and debts per token for all users,
+# This function iterates through all the raw balances per token for all users,
 # so it will take a while to run.
-async def get_raw_balance_per_user(
+async def get_z_token_raw_balances(
     underlying_address: str, block_number: int
 ) -> Dict[str, Dict[str, int]]:
-    raw_balance_per_user = {}
-    skip = 0
+    z_token_raw_balance_per_user = {}
+    last_user = None
+
+    total_users_count_debug = 0
 
     async def send_request(session, payload):
-        nonlocal raw_balance_per_user
-        nonlocal skip
+        nonlocal z_token_raw_balance_per_user
+        nonlocal last_user
+        nonlocal total_users_count_debug
         async with session.post(
             SUBGRAPH_URL, json=payload, headers={"Content-Type": "application/json"}
         ) as response:
@@ -153,32 +156,17 @@ async def get_raw_balance_per_user(
                     await asyncio.sleep(5)
                     return False
                 raw_supply_balances = data["data"]["ztokenRawBalances"]
-                raw_debt_balances = data["data"]["userRawDebts"]
 
-                if len(raw_supply_balances) == 0 and len(raw_debt_balances) == 0:
+                if len(raw_supply_balances) == 0:
                     return True
-                skip += PAGINATION_SIZE
+                last_user = raw_supply_balances[-1]["user"]
 
                 for item in raw_supply_balances:
                     raw_supply = item["raw_balance"]
-                    if item["user"] in raw_balance_per_user:
-                        raw_balance_per_user[item["user"]]["supply"] = int(raw_supply)
-                    else:
-                        raw_balance_per_user[item["user"]] = {
-                            "supply": int(raw_supply),
-                            "debt": 0,
-                        }
-                for item in raw_debt_balances:
-                    raw_debt = item["amount"]
-                    if item["user"] in raw_balance_per_user:
-                        raw_balance_per_user[item["user"]]["debt"] = int(raw_debt)
-                    else:
-                        raw_balance_per_user[item["user"]] = {
-                            "supply": 0,
-                            "debt": int(raw_debt),
-                        }
-
-                print(f"len(raw_balance_per_user): {len(raw_balance_per_user)}")
+                    z_token_raw_balance_per_user[item["user"]] = int(raw_supply)
+                
+                total_users_count_debug += len(raw_supply_balances)
+                print(f"users count for z_token raw balance of {underlying_address}: {total_users_count_debug}")
             else:
                 print(f"Error: {response.status_code}.  Retrying...")
                 await asyncio.sleep(5)
@@ -186,14 +174,16 @@ async def get_raw_balance_per_user(
 
     async with aiohttp.ClientSession() as session:
         while True:
+            user_gt = "" if last_user is None else f", user_gt: \"{last_user}\""
             payload = {
                 "query": f"""{{
                     ztokenRawBalances(
                         where:{{
-                            token: "{underlying_address}",
+                            token: "{underlying_address}"
+                            {user_gt}
                         }}, 
                         first: {PAGINATION_SIZE},
-                        skip: {skip},
+                        orderBy: user,
                         block: {{
                             number: {block_number}
                         }}
@@ -201,12 +191,64 @@ async def get_raw_balance_per_user(
                         user
                         raw_balance
                     }}
+                }}"""
+            }
+            done = await send_request(session, payload)
+            if done:
+                break
+
+    return z_token_raw_balance_per_user
+
+# This function iterates through all the debts per token for all users,
+# so it will take a while to run.
+async def get_raw_debts(
+    underlying_address: str, block_number: int
+) -> Dict[str, Dict[str, int]]:
+    raw_debt_per_user = {}
+    last_user = None
+    total_users_count_debug = 0
+
+    async def send_request(session, payload):
+        nonlocal raw_debt_per_user
+        nonlocal last_user
+        nonlocal total_users_count_debug
+        async with session.post(
+            SUBGRAPH_URL, json=payload, headers={"Content-Type": "application/json"}
+        ) as response:
+            if response.status == 200:
+                data = await response.json()
+                if not "data" in data:
+                    print(f'Error: no "data" in {data}. Retrying...')
+                    await asyncio.sleep(5)
+                    return False
+                raw_debt_balances = data["data"]["userRawDebts"]
+
+                if len(raw_debt_balances) == 0:
+                    return True
+                last_user = raw_debt_balances[-1]["user"]
+
+                for item in raw_debt_balances:
+                    raw_debt = item["amount"]
+                    raw_debt_per_user[item["user"]] = int(raw_debt)
+                total_users_count_debug += len(raw_debt_balances)
+                print(f"users count for raw debt of {underlying_address}: {total_users_count_debug}")
+            else:
+                print(f"Error: {response.status_code}.  Retrying...")
+                await asyncio.sleep(5)
+                return False
+
+    async with aiohttp.ClientSession() as session:
+        while True:
+            user_gt = "" if last_user is None else f", user_gt: \"{last_user}\""
+            payload = {
+                "query": f"""{{
                     userRawDebts(
                         where:{{
-                            token: "{underlying_address}",
+                            token: "{underlying_address}"
+                            {user_gt}
                         }}, 
                         first: {PAGINATION_SIZE},
-                        skip: {skip},
+                        orderBy: user,
                         block: {{
                             number: {block_number}
                         }}
@@ -220,7 +262,7 @@ async def get_raw_balance_per_user(
             if done:
                 break
 
-    return raw_balance_per_user
+    return raw_debt_per_user
 
 
 def calc_non_recursive_supply(
@@ -258,9 +300,23 @@ async def get_data(asset, block_height):
 
     lending_accumulator = await get_lending_accumulator(underlying_int, block_height)
     debt_accumulator = await get_debt_accumulator(underlying_int, block_height)
-    raw_balance_per_user = await get_raw_balance_per_user(
+    z_token_raw_balance_per_user = await get_z_token_raw_balances(
         asset["underlying"], block_height
     )
+    raw_debt_per_user = await get_raw_debts(asset["underlying"], block_height)
+
+    raw_balance_per_user = {}
+    for user in z_token_raw_balance_per_user:
+        raw_balance_per_user[user] = {
+            "supply": z_token_raw_balance_per_user[user],
+            "debt": 0,
+        }
+    for user in raw_debt_per_user:
+        if user not in raw_balance_per_user:
+            raw_balance_per_user[user] = {"supply": 0, "debt": raw_debt_per_user[user]}
+        else:
+            raw_balance_per_user[user]["debt"] = raw_debt_per_user[user]
+
     total_non_recursive_supply = calc_non_recursive_supply(
         raw_balance_per_user, lending_accumulator, debt_accumulator
     )
