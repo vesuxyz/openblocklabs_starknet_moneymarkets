@@ -168,7 +168,11 @@ async def get_z_token_raw_balances(
                 total_users_count_debug += len(raw_supply_balances)
                 print(f"users count for z_token raw balance of {underlying_address}: {total_users_count_debug}")
             else:
-                print(f"Error: {response.status_code}.  Retrying...")
+                if 'status_code' in response:
+                    print(f"Error: {response.status_code}.  Retrying...")
+                # When the server times out, status_code doesn't exist
+                else:
+                    print("Error: timeout. Retrying...")
                 await asyncio.sleep(5)
                 return False
 
@@ -233,7 +237,11 @@ async def get_raw_debts(
                 total_users_count_debug += len(raw_debt_balances)
                 print(f"users count for raw debt of {underlying_address}: {total_users_count_debug}")
             else:
-                print(f"Error: {response.status_code}.  Retrying...")
+                if 'status_code' in response:
+                    print(f"Error: {response.status_code}.  Retrying...")
+                # When the server times out, status_code doesn't exist
+                else:
+                    print("Error: timeout. Retrying...")
                 await asyncio.sleep(5)
                 return False
 
