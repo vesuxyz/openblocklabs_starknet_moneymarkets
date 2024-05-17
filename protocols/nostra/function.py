@@ -376,14 +376,19 @@ def aggregate_non_recursive_supply_without_index(asset):
         {
             "$addFields": {
                 "non_recursive_supply": {
-                    "$max": [
-                        0,
+                    "$add": [
+                        "$i_token_sum",
                         {
-                            "$subtract": [
-                                {"$add": ["$i_token_sum", "$i_token_c_sum"]},
-                                "$d_token_sum",
+                            "$max": [
+                                0,
+                                {
+                                    "$subtract": [
+                                        "$i_token_c_sum",
+                                        "$d_token_sum"
+                                    ]
+                                }
                             ]
-                        },
+                        }
                     ]
                 }
             }
