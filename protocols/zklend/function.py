@@ -58,12 +58,19 @@ stables: List[Dict[str, Union[str, int]]] = [
         "pragma_price_adapter": "0x060f407449b26bc5e83461595e25dff3cca0733f654cd92a29bdd397d24e25bf",
     },
     {
-        "symbol": "DAI",
+        "symbol": "DAIv0",
         "token_decimals": 18,
         "underlying": "0x00da114221cb83fa859dbdb4c44beeaa0bb37c7537ad5ae66fe5e0efd20e6eb3",
         "z_token": "0x062fa7afe1ca2992f8d8015385a279f49fad36299754fb1e9866f4f052289376",
         "pragma_price_adapter": "0x05d1bc06ca368cc451f63b20bc12bd2299a4ae7776f4dcf977723839bef311a0",
     },
+    {
+        "symbol": "DAI",
+        "token_decimals": 18,
+        "underlying": "0x05574eb6b8789a91466f902c380d978e472db68170ff82a5b650b95a58ddf4ad",
+        "z_token": "0x04e9c97ac4bb76b743a59678432ca017fe263209a8b49e0618ecc73b9518db4a",
+        "pragma_price_adapter": "0x05d1bc06ca368cc451f63b20bc12bd2299a4ae7776f4dcf977723839bef311a0",
+    }
 ]
 stable_symbols = [asset["symbol"] for asset in stables]
 
