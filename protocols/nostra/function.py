@@ -146,7 +146,6 @@ async def get_stables_data(dai_price, usdc_price, usdt_price, uno_price):
     dai_index = normalize(
         await get_index(
             "0x022ccca3a16c9ef0df7d56cbdccd8c4a6f98356dfd11abc61a112483b242db90",
-            False,
             block_height,
         ),
         18,
@@ -154,7 +153,6 @@ async def get_stables_data(dai_price, usdc_price, usdt_price, uno_price):
     usdc_index = normalize(
         await get_index(
             "0x002fc2d4b41cc1f03d185e6681cbd40cced61915d4891517a042658d61cba3b1",
-            False,
             block_height,
         ),
         18,
@@ -162,7 +160,6 @@ async def get_stables_data(dai_price, usdc_price, usdt_price, uno_price):
     usdt_index = normalize(
         await get_index(
             "0x0360f9786a6595137f84f2d6931aaec09ceec476a94a98dcad2bb092c6c06701",
-            False,
             block_height,
         ),
         18,
@@ -170,7 +167,6 @@ async def get_stables_data(dai_price, usdc_price, usdt_price, uno_price):
     uno_index = normalize(
         await get_index(
             "0x01325caf7c91ee415b8df721fb952fa88486a0fc250063eafddd5d3c67867ce7",
-            True,
             block_height,
         ),
         18,
@@ -219,7 +215,7 @@ async def get_data(asset):
     tokenSymbol = asset["asset_symbol"]
     block_height = await client.get_block_number()
     lending_index_rate_raw = await get_index(
-        asset["i_token"], is_cairo_v2_implementation, block_height
+        asset["i_token"], block_height
     )
     non_recursive_supply_token_raw = get_non_recursive_supply(
         asset, lending_index_rate_raw
@@ -266,16 +262,16 @@ async def get_supply(address, is_cairo_v2_implementation, block_number):
     return value
 
 
-async def get_index(address, is_cairo_v2_implementation, block_number):
+async def get_index(address, block_number):
     contract = await Contract.from_address(
         address=address,
         provider=client,
     )
-    (value,) = await contract.functions[
-        "token_index" if is_cairo_v2_implementation else "getTokenIndex"
-    ].call(block_number=block_number)
+    try:
+        (value,) = await contract.functions["token_index"].call(block_number=block_number)
+    except Exception:
+        (value,) = await contract.functions["getTokenIndex"].call(block_number=block_number)
     return value
-
 
 async def get_pragma_eth_price():
     # nostra oracle (uses pragma under the hood)
