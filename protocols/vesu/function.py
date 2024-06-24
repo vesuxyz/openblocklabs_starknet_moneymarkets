@@ -17,36 +17,44 @@ MARKETS = [
     {
         "asset": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
         "name": "Ether",
-        "symbol": "ETH"
+        "symbol": "ETH",
+        "decimals": 18,
+        "vToken": "0x04c73766862dc67b3c3a06f2fae8558fb1253d7a05e1d784b5bc5fc566545ec3"
     }, 
     {
         "asset": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac",
         "name": "Wrapped BTC",
         "symbol": "WBTC",
-        "decimals": 8
+        "decimals": 8,
+        "vToken": "0x065d685590870b0090851e7a815234eb2ab939187f88da99191852481cbcdbdb"
     },
     {
         "asset": "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
         "name": "USD Coin",
         "symbol": "USDC",
-        "decimals": 6
+        "decimals": 6,
+        "vToken": "0x026071850d0637590bfcb8ce4ca69e9db2152727cabc598f3861fecfa8676dbf"
     },
     {
         "asset": "0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8",
         "name": "Tether USD",
         "symbol": "USDT",
-        "decimals": 6
+        "decimals": 6,
+        "vToken": "0x043daf194cb18291bd725e83634fd3c6144a0ab3c1f1b2e62a5a2e5c8492f7ee"
     },
     {
         "asset": "0x042b8f0484674ca266ac5d08e4ac6a3fe65bd3129795def2dca5c34ecc5f96d2",
         "name": "Starknet Wrapped Staked Ether",
-        "symbol": "wstETH"
+        "symbol": "wstETH",
+        "decimals": 18,
+        "vToken": "0x9041f1270939f0e472a4d3abcb289042b4421f1a74e6f51499af62a0bc2b5e"
     },
     {
         "asset": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
         "name": "Starknet Token",
         "symbol": "STRK",
-        "decimals": 18
+        "decimals": 18,
+        "vToken": "0x042d3960696056bfaf9d65a4f7a57b7417e7fb0e0d44d4475dd845806381e089"
     }
 ]
 
@@ -63,9 +71,8 @@ async def get_market_info(market_info, singleton_contract, provider, POOL):
     # Notes:
     # - the pool (identified by POOL) does not support "recursive" supply/borrowing
     #   so supply = non-recursive-supply by default
-    # - rate_accumulator tracks interest due on the nominal_debt outstanding (and NOT
-    #   interest earned on the supply). Hence, interest generated is computed by
-    #   total_nominal_debt*(rate_accumulator - last_rate_accumulator)
+    # - rate_accumulator is an interest accrual index that converts to users' total
+    #   borrowed by multiplication with total_nominal_debt
     asset_config = (await singleton_contract.functions["asset_config_unsafe"].call(
         POOL, int(market_info['asset'], base=16)))[0][0]
     asset_scale = asset_config['scale']
@@ -73,6 +80,8 @@ async def get_market_info(market_info, singleton_contract, provider, POOL):
     rate_accumulator = asset_config['last_rate_accumulator'] / SCALE
     total_borrowed = asset_config['total_nominal_debt']  / SCALE
     total_supplied = reserve + rate_accumulator * total_borrowed
+    # lending_index_rate is fetched from the pool's vTokens directly
+    lending_index_rate = (await asyncio.gather(get_index(market_info, provider)))[0]
     return {
         "protocol": "Vesu",
         "date": formatted_date,
@@ -83,7 +92,7 @@ async def get_market_info(market_info, singleton_contract, provider, POOL):
         "net_supply_token": reserve,
         "non_recursive_supply_token": total_supplied,
         "block_height": block,
-        "lending_index_rate": rate_accumulator
+        "lending_index_rate": lending_index_rate / SCALE
     }
 
 # Fetch data for stablecoins combined
@@ -108,7 +117,7 @@ async def get_stables_info(markets, results_markets, provider, EXTENSION, POOL):
     for asset in df_prices.asset:
         rate_accumulator = df_markets.query('market == @asset').lending_index_rate.iloc[0]
         supply = df_markets.query('market == @asset').supply_token.iloc[0]
-        non_recursive_supplied = supply - rate_accumulator * df_pairs.query('asset == @asset').recursive_nominal_debt.iloc[0]
+        non_recursive_supplied = supply - df_pairs.query('asset == @asset').recursive_nominal_debt.iloc[0]
         price = df_prices.query('asset == @asset').price.iloc[0]
         total_non_recursive_supplied += price * max(0, non_recursive_supplied)
     return {
@@ -144,6 +153,13 @@ async def get_price(market_info, extension_contract, POOL):
         "asset": asset,
         "price": asset_price / SCALE
     }
+
+# Fetch the lending index rate (pulls from vToken)
+async def get_index(market_info, provider):
+    vToken_contract = await Contract.from_address(provider=provider, address=market_info['vToken'])
+    index = (await vToken_contract.functions['convert_to_assets'].call(
+        int(SCALE)))[0]
+    return index
 
 async def main():
     """
