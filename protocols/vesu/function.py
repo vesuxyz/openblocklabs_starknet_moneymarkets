@@ -73,13 +73,15 @@ async def get_market_info(market_info, singleton_contract, provider, POOL):
     #   so supply = non-recursive-supply by default
     # - rate_accumulator is an interest accrual index that converts to users' total
     #   borrowed by multiplication with total_nominal_debt
+    # - we add the raw rate_accumulator to the return values so 'get_stables_info' 
+    #   can reuse, then drop the column of the DataFrame at the end again
     asset_config = (await singleton_contract.functions["asset_config_unsafe"].call(
         POOL, int(market_info['asset'], base=16)))[0][0]
     asset_scale = asset_config['scale']
     reserve = asset_config['reserve'] / asset_scale
     rate_accumulator = asset_config['last_rate_accumulator'] / SCALE
-    total_borrowed = asset_config['total_nominal_debt']  / SCALE
-    total_supplied = reserve + rate_accumulator * total_borrowed
+    total_borrowed = rate_accumulator * asset_config['total_nominal_debt']  / SCALE
+    total_supplied = reserve + total_borrowed
     # lending_index_rate is fetched from the pool's vTokens directly
     lending_index_rate = (await asyncio.gather(get_index(market_info, provider)))[0]
     return {
@@ -92,7 +94,8 @@ async def get_market_info(market_info, singleton_contract, provider, POOL):
         "net_supply_token": reserve,
         "non_recursive_supply_token": total_supplied,
         "block_height": block,
-        "lending_index_rate": lending_index_rate / SCALE
+        "lending_index_rate": lending_index_rate / SCALE,
+        "rate_accumulator": rate_accumulator
     }
 
 # Fetch data for stablecoins combined
@@ -115,9 +118,10 @@ async def get_stables_info(markets, results_markets, provider, EXTENSION, POOL):
     df_prices = pd.DataFrame(results_prices)
     total_non_recursive_supplied = 0
     for asset in df_prices.asset:
-        rate_accumulator = df_markets.query('market == @asset').lending_index_rate.iloc[0]
         supply = df_markets.query('market == @asset').supply_token.iloc[0]
-        non_recursive_supplied = supply - df_pairs.query('asset == @asset').recursive_nominal_debt.iloc[0]
+        recursive_borrow = (df_markets.query('market == @asset').rate_accumulator.iloc[0] * 
+            df_pairs.query('asset == @asset').recursive_nominal_debt.iloc[0])
+        non_recursive_supplied = supply - recursive_borrow
         price = df_prices.query('asset == @asset').price.iloc[0]
         total_non_recursive_supplied += price * max(0, non_recursive_supplied)
     return {
@@ -177,6 +181,7 @@ async def main():
     results_stables = await get_stables_info(MARKETS, results_markets, provider, EXTENSION, POOL)
     results_markets.append(results_stables)
     df = pd.DataFrame(results_markets)
+    df.drop('rate_accumulator', axis=1, inplace=True)
     print(df.to_string())
     return df
 
