@@ -116,22 +116,27 @@ async def get_stables_info(markets, results_markets, provider, EXTENSION, POOL):
                   if market_info['symbol'] in STABLES]
     results_prices = await asyncio.gather(*coroutines)
     df_prices = pd.DataFrame(results_prices)
+    total_supply = 0
+    total_borrow = 0
     total_non_recursive_supplied = 0
     for asset in df_prices.asset:
         supply = df_markets.query('market == @asset').supply_token.iloc[0]
+        borrow = df_markets.query('market == @asset').borrow_token.iloc[0]
         recursive_borrow = (df_markets.query('market == @asset').rate_accumulator.iloc[0] * 
             df_pairs.query('asset == @asset').recursive_nominal_debt.iloc[0])
         non_recursive_supplied = supply - recursive_borrow
         price = df_prices.query('asset == @asset').price.iloc[0]
+        total_supply += price * supply
+        total_borrow += price * borrow
         total_non_recursive_supplied += price * max(0, non_recursive_supplied)
     return {
         "protocol": "Vesu",
         "date": df_markets.date[0],
         "market": "0x0stable",
         "tokenSymbol": "STB",
-        "supply_token": 0,
-        "borrow_token": 0,
-        "net_supply_token": 0,
+        "supply_token": total_supply,
+        "borrow_token": total_borrow,
+        "net_supply_token": total_supply - total_borrow,
         "non_recursive_supply_token": total_non_recursive_supplied,
         "block_height": df_markets.block_height[0],
         "lending_index_rate": 1.0
