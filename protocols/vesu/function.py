@@ -19,42 +19,42 @@ MARKETS = [
         "name": "Ether",
         "symbol": "ETH",
         "decimals": 18,
-        "vToken": "0x04c73766862dc67b3c3a06f2fae8558fb1253d7a05e1d784b5bc5fc566545ec3"
+        "vToken": "0x021fe2ca1b7e731e4a5ef7df2881356070c5d72db4b2d19f9195f6b641f75df0"
     }, 
     {
         "asset": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac",
         "name": "Wrapped BTC",
         "symbol": "WBTC",
         "decimals": 8,
-        "vToken": "0x065d685590870b0090851e7a815234eb2ab939187f88da99191852481cbcdbdb"
+        "vToken": "0x06b0ef784eb49c85f4d9447f30d7f7212be65ce1e553c18d516c87131e81dbd6"
     },
     {
         "asset": "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
         "name": "USD Coin",
         "symbol": "USDC",
         "decimals": 6,
-        "vToken": "0x026071850d0637590bfcb8ce4ca69e9db2152727cabc598f3861fecfa8676dbf"
+        "vToken": "0x01610abab2ff987cdfb5e73cccbf7069cbb1a02bbfa5ee31d97cc30e29d89090"
     },
     {
         "asset": "0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8",
         "name": "Tether USD",
         "symbol": "USDT",
         "decimals": 6,
-        "vToken": "0x043daf194cb18291bd725e83634fd3c6144a0ab3c1f1b2e62a5a2e5c8492f7ee"
+        "vToken": "0x032dd20efeb027ee51e676280df60c609ac6f6dcff798e4523515bc1668ed715"
     },
     {
         "asset": "0x042b8f0484674ca266ac5d08e4ac6a3fe65bd3129795def2dca5c34ecc5f96d2",
         "name": "Starknet Wrapped Staked Ether",
         "symbol": "wstETH",
         "decimals": 18,
-        "vToken": "0x9041f1270939f0e472a4d3abcb289042b4421f1a74e6f51499af62a0bc2b5e"
+        "vToken": "0x044a8304cd9d00a1730e4acbc31fb3a2f8cf1272d95c39c76e338841026fd001"
     },
     {
         "asset": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
         "name": "Starknet Token",
         "symbol": "STRK",
         "decimals": 18,
-        "vToken": "0x042d3960696056bfaf9d65a4f7a57b7417e7fb0e0d44d4475dd845806381e089"
+        "vToken": "0x037ae3f583c8d644b7556c93a04b83b52fa96159b2b0cbd83c14d3122aef80a2"
     }
 ]
 
