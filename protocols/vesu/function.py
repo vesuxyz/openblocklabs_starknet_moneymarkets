@@ -94,7 +94,7 @@ async def get_market_info(market_info, singleton_contract, provider, POOL):
         "net_supply_token": reserve,
         "non_recursive_supply_token": total_supplied,
         "block_height": block,
-        "lending_index_rate": lending_index_rate / SCALE,
+        "lending_index_rate": lending_index_rate / asset_scale,
         "rate_accumulator": rate_accumulator
     }
 
