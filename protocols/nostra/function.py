@@ -40,12 +40,20 @@ ASSETS = [
         "d_token": "0x024e9b0d6bc79e111e6872bb1ada2a874c25712cf08dfc5bcf0de008a7cca55f",
     },
     {
-        "asset_symbol": "DAI",
+        "asset_symbol": "DAI_V0",
         "decimals": 18,
         "asset_address": "0x00da114221cb83fa859dbdb4c44beeaa0bb37c7537ad5ae66fe5e0efd20e6eb3",
         "i_token": "0x022ccca3a16c9ef0df7d56cbdccd8c4a6f98356dfd11abc61a112483b242db90",
         "i_token_c": "0x04f18ffc850cdfa223a530d7246d3c6fc12a5969e0aa5d4a88f470f5fe6c46e9",
         "d_token": "0x066037c083c33330a8460a65e4748ceec275bbf5f28aa71b686cbc0010e12597",
+    },
+    {
+        "asset_symbol": "DAI",
+        "decimals": 18,
+        "asset_address": "0x05574eb6b8789a91466f902c380d978e472db68170ff82a5b650b95a58ddf4ad",
+        "i_token": "0x065bde349f553cf4bdd873e54cd48317eda0542764ebe5ba46984cedd940a5e4",
+        "i_token_c": None,
+        "d_token": "0x06726ec97bae4e28efa8993a8e0853bd4bad0bd71de44c23a1cd651b026b00e7",
     },
     {
         "asset_symbol": "UNO",
@@ -114,6 +122,7 @@ async def main():
 
     # Prices mapping
     prices = {
+        "DAI_V0": dai_price,
         "DAI": dai_price,
         "USDC": usdc_price,
         "USDT": usdt_price,
@@ -143,9 +152,16 @@ async def main():
 
 async def get_stables_data(dai_price, usdc_price, usdt_price, uno_price):
     block_height = await client.get_block_number()
-    dai_index = normalize(
+    dai_v0_index = normalize(
         await get_index(
             "0x022ccca3a16c9ef0df7d56cbdccd8c4a6f98356dfd11abc61a112483b242db90",
+            block_height,
+        ),
+        18,
+    )
+    dai_index = normalize(
+        await get_index(
+            "0x065bde349f553cf4bdd873e54cd48317eda0542764ebe5ba46984cedd940a5e4",
             block_height,
         ),
         18,
@@ -175,6 +191,7 @@ async def get_stables_data(dai_price, usdc_price, usdt_price, uno_price):
     stables_non_recursive_supply = normalize(
         await aggregate_stablecoins_non_recursive_supply(
             ASSETS,
+            dai_v0_index,
             dai_index,
             usdc_index,
             usdt_index,
@@ -222,7 +239,8 @@ async def get_data(asset):
     )
     supply_token_raw = (
         await get_supply(asset["i_token"], is_cairo_v2_implementation, block_height)
-    ) + (await get_supply(asset["i_token_c"], is_cairo_v2_implementation, block_height))
+        ) + (await get_supply(asset["i_token_c"], is_cairo_v2_implementation, block_height) if asset["i_token_c"] is not None else 0)
+
     borrow_token_raw = await get_supply(
         asset["d_token"], is_cairo_v2_implementation, block_height
     )
@@ -417,6 +435,7 @@ def aggregate_non_recursive_supply_without_index(asset):
 
 async def aggregate_stablecoins_non_recursive_supply(
     assets,
+    dai_v0_index,
     dai_index,
     usdc_index,
     usdt_index,
@@ -432,10 +451,15 @@ async def aggregate_stablecoins_non_recursive_supply(
     COLLECTION = "balances"
 
     stablecoin_addresses = {
-        "DAI": {
+        "DAI_V0": {
             "i_token": "0x022ccca3a16c9ef0df7d56cbdccd8c4a6f98356dfd11abc61a112483b242db90",
             "i_token_c": "0x04f18ffc850cdfa223a530d7246d3c6fc12a5969e0aa5d4a88f470f5fe6c46e9",
             "d_token": "0x066037c083c33330a8460a65e4748ceec275bbf5f28aa71b686cbc0010e12597",
+        },
+        "DAI": {
+            "i_token": "0x065bde349f553cf4bdd873e54cd48317eda0542764ebe5ba46984cedd940a5e4",
+            "i_token_c": None,
+            "d_token": "0x06726ec97bae4e28efa8993a8e0853bd4bad0bd71de44c23a1cd651b026b00e7",
         },
         "USDC": {
             "i_token": "0x002fc2d4b41cc1f03d185e6681cbd40cced61915d4891517a042658d61cba3b1",
@@ -463,6 +487,7 @@ async def aggregate_stablecoins_non_recursive_supply(
         {"$match": {"tokenAddress": {"$in": token_addresses}}},
         {
             "$addFields": {
+                "dai_v0_index": {"$toDecimal": dai_v0_index},
                 "dai_index": {"$toDecimal": dai_index},
                 "usdc_index": {"$toDecimal": usdc_index},
                 "usdt_index": {"$toDecimal": usdt_index},
@@ -483,6 +508,7 @@ async def aggregate_stablecoins_non_recursive_supply(
                                     "$in": [
                                         "$tokenAddress",
                                         [
+                                            stablecoin_addresses["DAI_V0"]["i_token"],
                                             stablecoin_addresses["DAI"]["i_token"],
                                             stablecoin_addresses["USDC"]["i_token"],
                                             stablecoin_addresses["USDT"]["i_token"],
@@ -497,7 +523,7 @@ async def aggregate_stablecoins_non_recursive_supply(
                                     "$in": [
                                         "$tokenAddress",
                                         [
-                                            stablecoin_addresses["DAI"]["i_token_c"],
+                                            stablecoin_addresses["DAI_V0"]["i_token_c"],
                                             stablecoin_addresses["USDC"]["i_token_c"],
                                             stablecoin_addresses["USDT"]["i_token_c"],
                                             stablecoin_addresses["UNO"]["i_token_c"],
@@ -534,20 +560,32 @@ async def aggregate_stablecoins_non_recursive_supply(
                                 },
                                 "else": {
                                     "$cond": {
-                                        "if": {"$eq": ["$asset", "DAI"]},
+                                        "if": {"$eq": ["$asset", "DAI_V0"]},
                                         "then": {
                                             "$multiply": [
                                                 {"$toDecimal": "$balanceWithoutIndex"},
-                                                "$dai_index",
+                                                "$dai_v0_index",
                                                 "$dai_price",
                                             ]
                                         },
                                         "else": {
-                                            "$multiply": [
-                                                {"$toDecimal": "$balanceWithoutIndex"},
-                                                "$uno_index",
-                                                "$uno_price",
-                                            ]
+                                            "$cond": {
+                                                "if": {"$eq": ["$asset", "DAI"]},
+                                                "then": {
+                                                    "$multiply": [
+                                                        {"$toDecimal": "$balanceWithoutIndex"},
+                                                        "$dai_index",
+                                                        "$dai_price",
+                                                    ]
+                                                },
+                                                "else": {
+                                                    "$multiply": [
+                                                        {"$toDecimal": "$balanceWithoutIndex"},
+                                                        "$uno_index",
+                                                        "$uno_price",
+                                                    ]
+                                                }
+                                            }
                                         },
                                     }
                                 },
