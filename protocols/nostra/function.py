@@ -63,6 +63,14 @@ ASSETS = [
         "i_token_c": "0x02a3a9d7bcecc6d3121e3b6180b73c7e8f4c5f81c35a90c8dd457a70a842b723",
         "d_token": "0x04b036839a8769c04144cc47415c64b083a2b26e4a7daa53c07f6042a0d35792",
     },
+    {
+        "asset_symbol": "wstETH",
+        "decimals": 18,
+        "asset_address": "0x042b8f0484674ca266ac5d08e4ac6a3fe65bd3129795def2dca5c34ecc5f96d2",
+        "i_token": "0x00ca44c79a77bcb186f8cdd1a0cd222cc258bebc3bec29a0a020ba20fdca40e9",
+        "i_token_c": "0x009377fdde350e01e0397820ea83ed3b4f05df30bfb8cf8055d62cafa1b2106a",
+        "d_token": "0x0348cc417fc877a7868a66510e8e0d0f3f351f5e6b0886a86b652fcb30a3d1fb",
+    },
 ]
 
 
@@ -223,9 +231,6 @@ def normalize(value, decimals):
 
 
 async def get_data(asset):
-    is_cairo_v2_implementation = (
-        asset["asset_symbol"] == "STRK" or asset["asset_symbol"] == "UNO"
-    )
     protocol = "Nostra"
     formatted_date = datetime.now().strftime("%Y-%m-%d")
     market = asset["asset_address"]
@@ -237,13 +242,13 @@ async def get_data(asset):
     non_recursive_supply_token_raw = get_non_recursive_supply(
         asset, lending_index_rate_raw
     )
-    supply_token_raw = (
-        await get_supply(asset["i_token"], is_cairo_v2_implementation, block_height)
-        ) + (await get_supply(asset["i_token_c"], is_cairo_v2_implementation, block_height) if asset["i_token_c"] is not None else 0)
-
-    borrow_token_raw = await get_supply(
-        asset["d_token"], is_cairo_v2_implementation, block_height
+    supply_token_raw = (await get_supply(asset["i_token"], block_height)) + (
+        await get_supply(asset["i_token_c"], block_height)
+        if asset["i_token_c"] is not None
+        else 0
     )
+
+    borrow_token_raw = await get_supply(asset["d_token"], block_height)
     net_supply_token_raw = supply_token_raw - borrow_token_raw
 
     # Normalize the balance fields
@@ -269,14 +274,12 @@ async def get_data(asset):
     }
 
 
-async def get_supply(address, is_cairo_v2_implementation, block_number):
+async def get_supply(address, block_number):
     contract = await Contract.from_address(
         address=address,
         provider=client,
     )
-    (value,) = await contract.functions[
-        "total_supply" if is_cairo_v2_implementation else "totalSupply"
-    ].call(block_number=block_number)
+    (value,) = await contract.functions["total_supply"].call(block_number=block_number)
     return value
 
 
