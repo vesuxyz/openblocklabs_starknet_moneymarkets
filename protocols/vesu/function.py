@@ -1,16 +1,17 @@
 import asyncio
-import json
 from starknet_py.contract import Contract
 from starknet_py.net.full_node_client import FullNodeClient
 from datetime import datetime
 import pandas as pd
-import os
 from itertools import permutations
 
 # Configs
 # In addition to the configs below, make sure to add example.env vars
 NODE_URL = "https://starknet-mainnet.public.blastapi.io"
-ELIGIBLE = ["STRK", "ETH", "USDC", "USDT"]
+SINGLETON=0x2545b2e5d519fc230e9cd781046d3a64e092114f07e44771e0d719d148725ef
+EXTENSION=0x2334189e831d804d4a11d3f71d4a982ec82614ac12ed2e9ca2f8da4e6374fa
+POOL=2198503327643286920898110335698706244522220458610657370981979460625005526824
+ELIGIBLE = ["STRK", "ETH", "USDC", "USDT", "wstETH"]
 STABLES = ["USDC", "USDT"]
 SCALE = 10**18
 MARKETS = [
@@ -174,9 +175,6 @@ async def main():
     """
     Supply your calculation here according to the Guidelines.
     """
-    SINGLETON = os.getenv('SINGLETON')
-    EXTENSION = os.getenv('EXTENSION')
-    POOL = int(os.getenv('POOL'))
     provider = FullNodeClient(node_url=NODE_URL)
     singleton_contract = await Contract.from_address(provider=provider, address=SINGLETON)
     coroutines = [get_market_info(market_info, singleton_contract, provider, POOL)
