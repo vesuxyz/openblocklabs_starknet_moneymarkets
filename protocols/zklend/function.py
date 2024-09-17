@@ -41,6 +41,12 @@ non_stables: List[Dict[str, Union[str, int]]] = [
         "underlying": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
         "z_token": "0x01b5bd713e72fdc5d63ffd83762f81297f6175a5e0a4771cdadbc1dd5fe72cb1",
     },
+    {
+        "symbol": "wstETH",
+        "token_decimals": 18,
+        "underlying": "0x042b8F0484674cA266AC5D08e4aC6A3fE65bd3129795DEF2dCA5c34ecC5F96d2",
+        "z_token": "0x0536aa7e01ecc0235ca3e29da7b5ad5b12cb881e29034d87a4290edbb20b7c28",
+    }
 ]
 stables: List[Dict[str, Union[str, int]]] = [
     {
