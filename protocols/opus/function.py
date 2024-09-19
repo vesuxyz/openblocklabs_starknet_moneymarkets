@@ -75,7 +75,7 @@ async def get_collateral_info(
     if gate:
         gate = Contract(provider=provider, abi=GATE_ABI, address=gate, cairo_version=1)
         scale = 10 ** collateral_info["decimals"]
-        (deposited,) = await gate.functions["get_total_assets"].call()
+        (deposited,) = await gate.functions["get_total_assets"].call(block_number=block)
         deposited /= scale
     else:
         deposited = 0
@@ -103,7 +103,7 @@ async def get_cash_info(
         provider=provider, abi=SHRINE_ABI, address=SHRINE, cairo_version=1
     )
     scale = 10**18
-    (health,) = await shrine.functions["get_shrine_health"].call()
+    (health,) = await shrine.functions["get_shrine_health"].call(block_number=block)
     debt = health["debt"]["val"] / scale
 
     return {
@@ -134,6 +134,7 @@ async def main():
     ]
     res.append(await get_cash_info(provider, block, today))
     df = pd.DataFrame(res)
+    print(res)
 
     return df
 
