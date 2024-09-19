@@ -134,7 +134,6 @@ async def main():
     ]
     res.append(await get_cash_info(provider, block, today))
     df = pd.DataFrame(res)
-    print(res)
 
     return df
 
