@@ -113,7 +113,7 @@ async def get_cash_info(
         "tokenSymbol": "STB",
         "supply_token": 0,
         "borrow_token": debt,
-        "net_supply_token": 0,
+        "net_supply_token": -debt,
         "non_recursive_supply_token": 0,
         "block_height": block,
         "lending_index_rate": 1,
