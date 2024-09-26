@@ -94,7 +94,7 @@ async def get_collateral_info(
     }
 
 
-async def get_cash_info(
+async def get_stables_info(
     provider: FullNodeClient,
     block: int,
     date: str,
@@ -106,11 +106,11 @@ async def get_cash_info(
     (health,) = await shrine.functions["get_shrine_health"].call(block_number=block)
     debt = health["debt"]["val"] / scale
 
-    return {
+    cash_info = {
         "protocol": "Opus",
         "date": date,
-        "market": "0x0stable",
-        "tokenSymbol": "STB",
+        "market": "0x0498edfaf50ca5855666a700c25dd629d577eb9afccdf3b5977aec79aee55ada",
+        "tokenSymbol": "CASH",
         "supply_token": 0,
         "borrow_token": debt,
         "net_supply_token": -debt,
@@ -119,6 +119,11 @@ async def get_cash_info(
         "lending_index_rate": 1,
     }
 
+    stables_info = cash_info.copy()
+    stables_info["market"] = "0x0stable"
+    stables_info["tokenSymbol"] = "STB"
+
+    return [cash_info, stables_info]
 
 async def main():
     """
@@ -132,7 +137,7 @@ async def main():
         await get_collateral_info(provider, collateral_info, block, today)
         for collateral_info in COLLATERAL
     ]
-    res.append(await get_cash_info(provider, block, today))
+    res += await get_stables_info(provider, block, today)
     df = pd.DataFrame(res)
 
     return df
