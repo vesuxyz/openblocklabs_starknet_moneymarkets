@@ -6,10 +6,12 @@ from datetime import datetime
 from typing import Dict, List, Union
 from starknet_py.contract import Contract
 from starknet_py.net.full_node_client import FullNodeClient
+from statistics import median
 
 
-NODE_URL = "https://starknet-mainnet.public.blastapi.io"
+NODE_URL = "https://free-rpc.nethermind.io/mainnet-juno"
 SHRINE = "0x0498edfaf50ca5855666a700c25dd629d577eb9afccdf3b5977aec79aee55ada"
+EKUBO_ORACLE_EXTENSION = "0x005e470ff654d834983a46b8f29dfa99963d5044b993cb7b9c92243a69dab38f"
 
 GATE_ABI = json.load(
     open("./openblocklabs_starknet_moneymarkets/protocols/opus/gate.json")
@@ -17,7 +19,16 @@ GATE_ABI = json.load(
 SHRINE_ABI = json.load(
     open("./openblocklabs_starknet_moneymarkets/protocols/opus/shrine.json")
 )
+EKUBO_ORACLE_EXTENSION_ABI = json.load(
+    open("./openblocklabs_starknet_moneymarkets/protocols/opus/ekubo_oracle_extension.json")
+)
 
+DAI_ADDR = "0x05574eb6b8789a91466f902c380d978e472db68170ff82a5b650b95a58ddf4ad"
+USDC_ADDR = "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8"
+USDT_ADDR = "0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8"
+QUOTE_ADDRS = [DAI_ADDR, USDC_ADDR, USDT_ADDR]
+QUOTE_DECIMALS = [18, 6, 6]
+TWAP_DURATION = 24 * 60 * 60
 
 COLLATERAL: List[Dict[str, Union[str, int]]] = [
     {
@@ -49,14 +60,14 @@ COLLATERAL: List[Dict[str, Union[str, int]]] = [
         "gate": "0x05bc1c8a78667fac3bf9617903dbf2c1bfe3937e1d37ada3d8b86bf70fb7926e",
     },
     {
-        "asset": "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
+        "asset": USDC_ADDR,
         "name": "USD Coin",
         "symbol": "USDC",
         "decimals": 6,
         "gate": "",
     },
     {
-        "asset": "0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8",
+        "asset": USDT_ADDR,
         "name": "Tether USD",
         "symbol": "USDT",
         "decimals": 6,
@@ -94,6 +105,46 @@ async def get_collateral_info(
     }
 
 
+def x128_to_decimal(val: int, decimals: int) -> float:
+    assert decimals <= 18
+    unscaled = (val / 2 ** 128) ** 2
+    if decimals == 18:
+        return unscaled
+    
+    precision_diff = 18 - decimals
+    # scale by twice the difference due to earlier multiplication of sqrt value
+    scale = 10 ** (precision_diff * 2)
+    return unscaled * scale
+
+
+async def get_median_cash_price(
+    provider: FullNodeClient,
+    block: int
+) -> float:
+    block_timestamp = (await provider.get_block(block_number=block)).timestamp
+
+    ekubo_oracle_extension = Contract(
+        provider=provider, 
+        abi=EKUBO_ORACLE_EXTENSION_ABI, 
+        address=EKUBO_ORACLE_EXTENSION, 
+        cairo_version=1
+    )
+
+    prices = []
+    for token, decimals in zip(QUOTE_ADDRS, QUOTE_DECIMALS):
+        (price_x128,) = await ekubo_oracle_extension.functions["get_price_x128_over_period"].call(
+            int(SHRINE, 16),
+            int(token, 16),
+            block_timestamp - TWAP_DURATION,
+            block_timestamp
+        )
+        prices.append(x128_to_decimal(price_x128, decimals))
+
+    median_price = median(prices)
+    assert median_price != 0.0
+    return median_price
+
+
 async def get_stables_info(
     provider: FullNodeClient,
     block: int,
@@ -119,9 +170,15 @@ async def get_stables_info(
         "lending_index_rate": 1,
     }
 
+    cash_price = await get_median_cash_price(provider, block)
+
     stables_info = cash_info.copy()
     stables_info["market"] = "0x0stable"
     stables_info["tokenSymbol"] = "STB"
+
+    debt_usd_value = debt * cash_price
+    stables_info["borrow_token"] = debt_usd_value
+    stables_info["net_supply_token"] = -debt_usd_value
 
     return [cash_info, stables_info]
 

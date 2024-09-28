@@ -1,0 +1,839 @@
+[
+  {
+    "type": "impl",
+    "name": "HasInterfaceImpl",
+    "interface_name": "ekubo::components::upgradeable::IHasInterface"
+  },
+  {
+    "type": "interface",
+    "name": "ekubo::components::upgradeable::IHasInterface",
+    "items": [
+      {
+        "type": "function",
+        "name": "get_primary_interface_id",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::felt252"
+          }
+        ],
+        "state_mutability": "view"
+      }
+    ]
+  },
+  {
+    "type": "impl",
+    "name": "OracleImpl",
+    "interface_name": "ekubo_oracle_extension::oracle::IOracle"
+  },
+  {
+    "type": "enum",
+    "name": "core::bool",
+    "variants": [
+      {
+        "name": "False",
+        "type": "()"
+      },
+      {
+        "name": "True",
+        "type": "()"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "ekubo::types::i129::i129",
+    "members": [
+      {
+        "name": "mag",
+        "type": "core::integer::u128"
+      },
+      {
+        "name": "sign",
+        "type": "core::bool"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "core::array::Span::<(core::integer::u64, core::integer::u64)>",
+    "members": [
+      {
+        "name": "snapshot",
+        "type": "@core::array::Array::<(core::integer::u64, core::integer::u64)>"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "core::array::Span::<ekubo::types::i129::i129>",
+    "members": [
+      {
+        "name": "snapshot",
+        "type": "@core::array::Array::<ekubo::types::i129::i129>"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "core::integer::u256",
+    "members": [
+      {
+        "name": "low",
+        "type": "core::integer::u128"
+      },
+      {
+        "name": "high",
+        "type": "core::integer::u128"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "core::array::Span::<core::integer::u256>",
+    "members": [
+      {
+        "name": "snapshot",
+        "type": "@core::array::Array::<core::integer::u256>"
+      }
+    ]
+  },
+  {
+    "type": "interface",
+    "name": "ekubo_oracle_extension::oracle::IOracle",
+    "items": [
+      {
+        "type": "function",
+        "name": "get_average_tick_over_period",
+        "inputs": [
+          {
+            "name": "base_token",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "quote_token",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "start_time",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "end_time",
+            "type": "core::integer::u64"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "ekubo::types::i129::i129"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "get_average_tick_over_periods",
+        "inputs": [
+          {
+            "name": "base_token",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "quote_token",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "start_and_end_times",
+            "type": "core::array::Span::<(core::integer::u64, core::integer::u64)>"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::array::Span::<ekubo::types::i129::i129>"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "get_average_tick_over_last",
+        "inputs": [
+          {
+            "name": "base_token",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "quote_token",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "period",
+            "type": "core::integer::u64"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "ekubo::types::i129::i129"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "get_average_tick_history",
+        "inputs": [
+          {
+            "name": "base_token",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "quote_token",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "end_time",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "num_intervals",
+            "type": "core::integer::u32"
+          },
+          {
+            "name": "interval_seconds",
+            "type": "core::integer::u32"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::array::Span::<ekubo::types::i129::i129>"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "get_realized_volatility_over_period",
+        "inputs": [
+          {
+            "name": "token_a",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "token_b",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "end_time",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "num_intervals",
+            "type": "core::integer::u32"
+          },
+          {
+            "name": "interval_seconds",
+            "type": "core::integer::u32"
+          },
+          {
+            "name": "extrapolated_to",
+            "type": "core::integer::u32"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::integer::u64"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "get_price_x128_over_period",
+        "inputs": [
+          {
+            "name": "base_token",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "quote_token",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "start_time",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "end_time",
+            "type": "core::integer::u64"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::integer::u256"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "get_price_x128_over_last",
+        "inputs": [
+          {
+            "name": "base_token",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "quote_token",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "period",
+            "type": "core::integer::u64"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::integer::u256"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "get_average_price_x128_history",
+        "inputs": [
+          {
+            "name": "base_token",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "quote_token",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "end_time",
+            "type": "core::integer::u64"
+          },
+          {
+            "name": "num_intervals",
+            "type": "core::integer::u32"
+          },
+          {
+            "name": "interval_seconds",
+            "type": "core::integer::u32"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::array::Span::<core::integer::u256>"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "set_call_points",
+        "inputs": [],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "get_oracle_token",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "state_mutability": "view"
+      }
+    ]
+  },
+  {
+    "type": "impl",
+    "name": "OracleExtension",
+    "interface_name": "ekubo::interfaces::core::IExtension"
+  },
+  {
+    "type": "struct",
+    "name": "ekubo::types::keys::PoolKey",
+    "members": [
+      {
+        "name": "token0",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "token1",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "fee",
+        "type": "core::integer::u128"
+      },
+      {
+        "name": "tick_spacing",
+        "type": "core::integer::u128"
+      },
+      {
+        "name": "extension",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "ekubo::interfaces::core::SwapParameters",
+    "members": [
+      {
+        "name": "amount",
+        "type": "ekubo::types::i129::i129"
+      },
+      {
+        "name": "is_token1",
+        "type": "core::bool"
+      },
+      {
+        "name": "sqrt_ratio_limit",
+        "type": "core::integer::u256"
+      },
+      {
+        "name": "skip_ahead",
+        "type": "core::integer::u128"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "ekubo::types::delta::Delta",
+    "members": [
+      {
+        "name": "amount0",
+        "type": "ekubo::types::i129::i129"
+      },
+      {
+        "name": "amount1",
+        "type": "ekubo::types::i129::i129"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "ekubo::types::bounds::Bounds",
+    "members": [
+      {
+        "name": "lower",
+        "type": "ekubo::types::i129::i129"
+      },
+      {
+        "name": "upper",
+        "type": "ekubo::types::i129::i129"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "ekubo::interfaces::core::UpdatePositionParameters",
+    "members": [
+      {
+        "name": "salt",
+        "type": "core::felt252"
+      },
+      {
+        "name": "bounds",
+        "type": "ekubo::types::bounds::Bounds"
+      },
+      {
+        "name": "liquidity_delta",
+        "type": "ekubo::types::i129::i129"
+      }
+    ]
+  },
+  {
+    "type": "interface",
+    "name": "ekubo::interfaces::core::IExtension",
+    "items": [
+      {
+        "type": "function",
+        "name": "before_initialize_pool",
+        "inputs": [
+          {
+            "name": "caller",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "pool_key",
+            "type": "ekubo::types::keys::PoolKey"
+          },
+          {
+            "name": "initial_tick",
+            "type": "ekubo::types::i129::i129"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "after_initialize_pool",
+        "inputs": [
+          {
+            "name": "caller",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "pool_key",
+            "type": "ekubo::types::keys::PoolKey"
+          },
+          {
+            "name": "initial_tick",
+            "type": "ekubo::types::i129::i129"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "before_swap",
+        "inputs": [
+          {
+            "name": "caller",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "pool_key",
+            "type": "ekubo::types::keys::PoolKey"
+          },
+          {
+            "name": "params",
+            "type": "ekubo::interfaces::core::SwapParameters"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "after_swap",
+        "inputs": [
+          {
+            "name": "caller",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "pool_key",
+            "type": "ekubo::types::keys::PoolKey"
+          },
+          {
+            "name": "params",
+            "type": "ekubo::interfaces::core::SwapParameters"
+          },
+          {
+            "name": "delta",
+            "type": "ekubo::types::delta::Delta"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "before_update_position",
+        "inputs": [
+          {
+            "name": "caller",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "pool_key",
+            "type": "ekubo::types::keys::PoolKey"
+          },
+          {
+            "name": "params",
+            "type": "ekubo::interfaces::core::UpdatePositionParameters"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "after_update_position",
+        "inputs": [
+          {
+            "name": "caller",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "pool_key",
+            "type": "ekubo::types::keys::PoolKey"
+          },
+          {
+            "name": "params",
+            "type": "ekubo::interfaces::core::UpdatePositionParameters"
+          },
+          {
+            "name": "delta",
+            "type": "ekubo::types::delta::Delta"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "before_collect_fees",
+        "inputs": [
+          {
+            "name": "caller",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "pool_key",
+            "type": "ekubo::types::keys::PoolKey"
+          },
+          {
+            "name": "salt",
+            "type": "core::felt252"
+          },
+          {
+            "name": "bounds",
+            "type": "ekubo::types::bounds::Bounds"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "after_collect_fees",
+        "inputs": [
+          {
+            "name": "caller",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "pool_key",
+            "type": "ekubo::types::keys::PoolKey"
+          },
+          {
+            "name": "salt",
+            "type": "core::felt252"
+          },
+          {
+            "name": "bounds",
+            "type": "ekubo::types::bounds::Bounds"
+          },
+          {
+            "name": "delta",
+            "type": "ekubo::types::delta::Delta"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      }
+    ]
+  },
+  {
+    "type": "impl",
+    "name": "Owned",
+    "interface_name": "ekubo::components::owned::IOwned"
+  },
+  {
+    "type": "interface",
+    "name": "ekubo::components::owned::IOwned",
+    "items": [
+      {
+        "type": "function",
+        "name": "get_owner",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "transfer_ownership",
+        "inputs": [
+          {
+            "name": "new_owner",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      }
+    ]
+  },
+  {
+    "type": "impl",
+    "name": "Upgradeable",
+    "interface_name": "ekubo::components::upgradeable::IUpgradeable"
+  },
+  {
+    "type": "interface",
+    "name": "ekubo::components::upgradeable::IUpgradeable",
+    "items": [
+      {
+        "type": "function",
+        "name": "replace_class_hash",
+        "inputs": [
+          {
+            "name": "class_hash",
+            "type": "core::starknet::class_hash::ClassHash"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "ekubo::interfaces::core::ICoreDispatcher",
+    "members": [
+      {
+        "name": "contract_address",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ]
+  },
+  {
+    "type": "constructor",
+    "name": "constructor",
+    "inputs": [
+      {
+        "name": "owner",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "core",
+        "type": "ekubo::interfaces::core::ICoreDispatcher"
+      },
+      {
+        "name": "oracle_token",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "ekubo::components::upgradeable::Upgradeable::ClassHashReplaced",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "new_class_hash",
+        "type": "core::starknet::class_hash::ClassHash",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "ekubo::components::upgradeable::Upgradeable::Event",
+    "kind": "enum",
+    "variants": [
+      {
+        "name": "ClassHashReplaced",
+        "type": "ekubo::components::upgradeable::Upgradeable::ClassHashReplaced",
+        "kind": "nested"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "ekubo::components::owned::Owned::OwnershipTransferred",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "old_owner",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "new_owner",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "ekubo::components::owned::Owned::Event",
+    "kind": "enum",
+    "variants": [
+      {
+        "name": "OwnershipTransferred",
+        "type": "ekubo::components::owned::Owned::OwnershipTransferred",
+        "kind": "nested"
+      }
+    ]
+  },
+  {
+    "type": "struct",
+    "name": "ekubo_oracle_extension::oracle::snapshot::Snapshot",
+    "members": [
+      {
+        "name": "block_timestamp",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "tick_cumulative",
+        "type": "ekubo::types::i129::i129"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "ekubo_oracle_extension::oracle::Oracle::SnapshotEvent",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "token0",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "token1",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "index",
+        "type": "core::integer::u64",
+        "kind": "data"
+      },
+      {
+        "name": "snapshot",
+        "type": "ekubo_oracle_extension::oracle::snapshot::Snapshot",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "ekubo_oracle_extension::oracle::Oracle::Event",
+    "kind": "enum",
+    "variants": [
+      {
+        "name": "UpgradeableEvent",
+        "type": "ekubo::components::upgradeable::Upgradeable::Event",
+        "kind": "nested"
+      },
+      {
+        "name": "OwnedEvent",
+        "type": "ekubo::components::owned::Owned::Event",
+        "kind": "nested"
+      },
+      {
+        "name": "SnapshotEvent",
+        "type": "ekubo_oracle_extension::oracle::Oracle::SnapshotEvent",
+        "kind": "nested"
+      }
+    ]
+  }
+]
