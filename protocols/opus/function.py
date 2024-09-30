@@ -11,16 +11,25 @@ from statistics import median
 
 NODE_URL = "https://free-rpc.nethermind.io/mainnet-juno"
 SHRINE = "0x0498edfaf50ca5855666a700c25dd629d577eb9afccdf3b5977aec79aee55ada"
-EKUBO_ORACLE_EXTENSION = "0x005e470ff654d834983a46b8f29dfa99963d5044b993cb7b9c92243a69dab38f"
+EKUBO_ORACLE_EXTENSION = (
+    "0x005e470ff654d834983a46b8f29dfa99963d5044b993cb7b9c92243a69dab38f"
+)
+PRAGMA = "0x2a85bd616f912537c50a49a4076db02c00b29b2cdc8a197ce92ed1837fa875b"
+
 
 GATE_ABI = json.load(
-    open("./openblocklabs_starknet_moneymarkets/protocols/opus/gate.json")
+    open("./openblocklabs_starknet_moneymarkets/protocols/opus/abis/gate.json")
 )
 SHRINE_ABI = json.load(
-    open("./openblocklabs_starknet_moneymarkets/protocols/opus/shrine.json")
+    open("./openblocklabs_starknet_moneymarkets/protocols/opus/abis/shrine.json")
 )
 EKUBO_ORACLE_EXTENSION_ABI = json.load(
-    open("./openblocklabs_starknet_moneymarkets/protocols/opus/ekubo_oracle_extension.json")
+    open(
+        "./openblocklabs_starknet_moneymarkets/protocols/opus/abis/ekubo_oracle_extension.json"
+    )
+)
+PRAGMA_ABI = json.load(
+    open("./openblocklabs_starknet_moneymarkets/protocols/opus/abis/pragma.json")
 )
 
 DAI_ADDR = "0x05574eb6b8789a91466f902c380d978e472db68170ff82a5b650b95a58ddf4ad"
@@ -28,6 +37,7 @@ USDC_ADDR = "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8"
 USDT_ADDR = "0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8"
 QUOTE_ADDRS = [DAI_ADDR, USDC_ADDR, USDT_ADDR]
 QUOTE_DECIMALS = [18, 6, 6]
+QUOTE_PRAGMA_PAIR_IDS = [19212080998863684, 6148332971638477636, 6148333044652921668]
 TWAP_DURATION = 24 * 60 * 60
 
 COLLATERAL: List[Dict[str, Union[str, int]]] = [
@@ -107,38 +117,57 @@ async def get_collateral_info(
 
 def x128_to_decimal(val: int, decimals: int) -> float:
     assert decimals <= 18
-    unscaled = (val / 2 ** 128) ** 2
+    unscaled = (val / 2**128) ** 2
     if decimals == 18:
         return unscaled
-    
+
     precision_diff = 18 - decimals
     # scale by twice the difference due to earlier multiplication of sqrt value
     scale = 10 ** (precision_diff * 2)
     return unscaled * scale
 
 
-async def get_median_cash_price(
-    provider: FullNodeClient,
-    block: int
-) -> float:
+async def get_median_cash_price(provider: FullNodeClient, block: int) -> float:
     block_timestamp = (await provider.get_block(block_number=block)).timestamp
 
     ekubo_oracle_extension = Contract(
-        provider=provider, 
-        abi=EKUBO_ORACLE_EXTENSION_ABI, 
-        address=EKUBO_ORACLE_EXTENSION, 
-        cairo_version=1
+        provider=provider,
+        abi=EKUBO_ORACLE_EXTENSION_ABI,
+        address=EKUBO_ORACLE_EXTENSION,
+        cairo_version=1,
+    )
+
+    pragma = Contract(
+        provider=provider,
+        abi=PRAGMA_ABI,
+        address=PRAGMA,
+        cairo_version=1,
     )
 
     prices = []
-    for token, decimals in zip(QUOTE_ADDRS, QUOTE_DECIMALS):
-        (price_x128,) = await ekubo_oracle_extension.functions["get_price_x128_over_period"].call(
+    for token, decimals, pair_id in zip(
+        QUOTE_ADDRS, QUOTE_DECIMALS, QUOTE_PRAGMA_PAIR_IDS
+    ):
+        # get CASH/QUOTE price from Ekubo
+        (quote_price_x128,) = await ekubo_oracle_extension.functions[
+            "get_price_x128_over_period"
+        ].call(
             int(SHRINE, 16),
             int(token, 16),
             block_timestamp - TWAP_DURATION,
-            block_timestamp
+            block_timestamp,
+            block_number=block
         )
-        prices.append(x128_to_decimal(price_x128, decimals))
+        quote_price = x128_to_decimal(quote_price_x128, decimals)
+
+        # multiply quote price with QUOTE/USD price from Pragma
+        (pragma_res,) = await pragma.functions["get_data_median"].call(
+            {"SpotEntry": pair_id},
+            block_number=block
+        )
+        pragma_price = pragma_res["price"] / 10 ** pragma_res["decimals"]
+        price = quote_price * pragma_price
+        prices.append(price)
 
     median_price = median(prices)
     assert median_price != 0.0
@@ -182,6 +211,7 @@ async def get_stables_info(
 
     return [cash_info, stables_info]
 
+
 async def main():
     """
     Supply your calculation here according to the Guidelines.
@@ -196,7 +226,7 @@ async def main():
     ]
     res += await get_stables_info(provider, block, today)
     df = pd.DataFrame(res)
-
+    print(df)
     return df
 
 
