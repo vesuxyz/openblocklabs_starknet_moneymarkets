@@ -1,0 +1,185 @@
+[
+  {
+    "type": "impl",
+    "name": "IGateImpl",
+    "interface_name": "opus::interfaces::IGate::IGate"
+  },
+  {
+    "type": "struct",
+    "name": "wadray::wadray::Wad",
+    "members": [
+      {
+        "name": "val",
+        "type": "core::integer::u128"
+      }
+    ]
+  },
+  {
+    "type": "interface",
+    "name": "opus::interfaces::IGate::IGate",
+    "items": [
+      {
+        "type": "function",
+        "name": "get_shrine",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "get_sentinel",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "get_asset",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "get_total_assets",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::integer::u128"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "get_total_yang",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "wadray::wadray::Wad"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "enter",
+        "inputs": [
+          {
+            "name": "user",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "asset_amt",
+            "type": "core::integer::u128"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "wadray::wadray::Wad"
+          }
+        ],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "exit",
+        "inputs": [
+          {
+            "name": "user",
+            "type": "core::starknet::contract_address::ContractAddress"
+          },
+          {
+            "name": "yang_amt",
+            "type": "wadray::wadray::Wad"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::integer::u128"
+          }
+        ],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "get_asset_amt_per_yang",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "wadray::wadray::Wad"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "convert_to_yang",
+        "inputs": [
+          {
+            "name": "asset_amt",
+            "type": "core::integer::u128"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "wadray::wadray::Wad"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "convert_to_assets",
+        "inputs": [
+          {
+            "name": "yang_amt",
+            "type": "wadray::wadray::Wad"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::integer::u128"
+          }
+        ],
+        "state_mutability": "view"
+      }
+    ]
+  },
+  {
+    "type": "constructor",
+    "name": "constructor",
+    "inputs": [
+      {
+        "name": "shrine",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "asset",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "sentinel",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "opus::core::gate::gate::Event",
+    "kind": "enum",
+    "variants": []
+  }
+]
