@@ -9,7 +9,7 @@ from itertools import permutations
 # In addition to the configs below, make sure to add example.env vars
 NODE_URL = "https://starknet-mainnet.public.blastapi.io"
 SINGLETON=0x2545b2e5d519fc230e9cd781046d3a64e092114f07e44771e0d719d148725ef
-ELIGIBLE = ["STRK", "ETH", "USDC", "USDT", "wstETH", "xSTRK", "sSTRK"]
+ELIGIBLE = ["STRK", "ETH", "USDC", "USDT", "xSTRK", "sSTRK"]
 STABLES = ["USDC", "USDT"]
 SCALE = 10**18
 MARKETS = [
@@ -208,7 +208,7 @@ async def get_stables_info(markets, results_markets, provider):
                   for market_info in markets 
                   if market_info['symbol'] in STABLES]
     results_prices = await asyncio.gather(*coroutines)
-    df_prices = pd.DataFrame(results_prices)
+    df_prices = pd.DataFrame(results_prices).groupby('asset').mean().reset_index()
     total_supply = 0
     total_borrow = 0
     total_non_recursive_supplied = 0
