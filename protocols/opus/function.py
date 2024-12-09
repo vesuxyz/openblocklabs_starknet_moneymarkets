@@ -83,6 +83,20 @@ COLLATERAL: List[Dict[str, Union[str, int]]] = [
         "decimals": 6,
         "gate": "",
     },
+    {
+        "asset": "0x028d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a",
+        "name": "Endur xSTRK",
+        "symbol": "xSTRK",
+        "decimals": 18,
+        "gate": "0x04a3e7dffd8e74a706be9abe6474e07fbbcf41e1be71387514c4977d54dbc428",
+    },
+    {
+        "asset": "0x0356f304b154d29d2a8fe22f1cb9107a9b564a733cf6b4cc47fd121ac1af90c9",
+        "name": "Staked Starknet Token",
+        "symbol": "sSTRK",
+        "decimals": 18,
+        "gate": "0x03b709f3ab9bc072a195b907fb2c27688723b6e4abb812a8941def819f929bd8",
+    },
 ]
 
 
