@@ -9,7 +9,7 @@ from itertools import permutations
 # In addition to the configs below, make sure to add example.env vars
 NODE_URL = "https://starknet-mainnet.public.blastapi.io"
 SINGLETON=0x2545b2e5d519fc230e9cd781046d3a64e092114f07e44771e0d719d148725ef
-ELIGIBLE = ["STRK", "ETH", "USDC", "USDT", "xSTRK", "sSTRK"]
+ELIGIBLE = ["STRK", "ETH", "USDC", "USDT", "xSTRK", "sSTRK", "wstETH"]
 STABLES = ["USDC", "USDT"]
 SCALE = 10**18
 MARKETS = [
