@@ -79,6 +79,14 @@ ASSETS = [
         "i_token_c": "0x0257afe480da9255a026127cd3a295a580ef316b297a69be22b89729ae8c1d2a",
         "d_token": "0x0424638c9060d08b4820aabbb28347fc7234e2b7aadab58ad0f101e2412ea42d",
     },
+    {
+        "asset_symbol": "sSTRK",
+        "decimals": 18,
+        "asset_address": "0x0356f304b154d29d2a8fe22f1cb9107a9b564a733cf6b4cc47fd121ac1af90c9",
+        "i_token": "0x24fbb2888e04b47f1bc1f3232528dcfc1ddf69d150b19241628e6d42b3545c6",
+        "i_token_c": "0x1fb33831f458b0786e1a041ac2e9df7603635a7caa88aa4ed30c23a787d4e3a",
+        "d_token": "0x4349ca3d519e1b1da9da5da3cf19e2039b1776a9fe98c529f95ead7964fe0d",
+    },
 ]
 
 
