@@ -46,7 +46,13 @@ non_stables: List[Dict[str, Union[str, int]]] = [
         "token_decimals": 18,
         "underlying": "0x042b8F0484674cA266AC5D08e4aC6A3fE65bd3129795DEF2dCA5c34ecC5F96d2",
         "z_token": "0x0536aa7e01ecc0235ca3e29da7b5ad5b12cb881e29034d87a4290edbb20b7c28",
-    }
+    },
+    {
+        "symbol": "kSTRK",
+        "token_decimals": 18,
+        "underlying": "0x045cd05ee2caaac3459b87e5e2480099d201be2f62243f839f00e10dde7f500c",
+        "z_token": "0x07e475a3b2d64b97e48860bde4dad0255727c75f69aec760f90bd4d17e7f7d21",
+    },
 ]
 stables: List[Dict[str, Union[str, int]]] = [
     {
