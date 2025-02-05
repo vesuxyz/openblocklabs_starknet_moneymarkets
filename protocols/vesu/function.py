@@ -13,7 +13,7 @@ ELIGIBLE = ["STRK", "ETH", "USDC", "USDT", "xSTRK", "sSTRK", "wstETH"]
 STABLES = ["USDC", "USDT"]
 SCALE = 10**18
 MARKETS = [
-    {
+    { # Genesis pool
         "pool": "0x4dc4f0ca6ea4961e4c8373265bfd5317678f4fe374d76f3fd7135f57763bf28",
         "extension": "0x2334189e831d804d4a11d3f71d4a982ec82614ac12ed2e9ca2f8da4e6374fa",
         "asset": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
@@ -52,11 +52,11 @@ MARKETS = [
     {
         "pool": "0x4dc4f0ca6ea4961e4c8373265bfd5317678f4fe374d76f3fd7135f57763bf28",
         "extension": "0x2334189e831d804d4a11d3f71d4a982ec82614ac12ed2e9ca2f8da4e6374fa",
-        "asset": "0x042b8f0484674ca266ac5d08e4ac6a3fe65bd3129795def2dca5c34ecc5f96d2",
-        "name": "Starknet Wrapped Staked Ether",
+        "asset": "0x57912720381af14b0e5c87aa4718ed5e527eab60b3801ebf702ab09139e38b",
+        "name": "Wrapped Staked Ether",
         "symbol": "wstETH",
         "decimals": 18,
-        "vToken": "0x044a8304cd9d00a1730e4acbc31fb3a2f8cf1272d95c39c76e338841026fd001"
+        "vToken": "0x0159133f57b09260c707ff9d3ce93abdedee740795cc64a9233a0d61f15af923"
     },
     {
         "pool": "0x4dc4f0ca6ea4961e4c8373265bfd5317678f4fe374d76f3fd7135f57763bf28",
@@ -67,7 +67,7 @@ MARKETS = [
         "decimals": 18,
         "vToken": "0x037ae3f583c8d644b7556c93a04b83b52fa96159b2b0cbd83c14d3122aef80a2"
     },
-    {
+    { # Re7 xSTRK pool
         "pool": "0x052fb52363939c3aa848f8f4ac28f0a51379f8d1b971d8444de25fbd77d8f161",
         "extension": "0x07cf3881eb4a58e76b41a792fa151510e7057037d80eda334682bd3e73389ec0",
         "asset": "0x028d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a",
@@ -85,7 +85,7 @@ MARKETS = [
         "decimals": 18,
         "vToken": "0x01f876e2da54266911d8a7409cba487414d318a2b6540149520bf7e2af56b93c"
     },
-    {
+    { # Re7 sSTRK pool
         "pool": "0x02e06b705191dbe90a3fbaad18bb005587548048b725116bff3104ca501673c1",
         "extension": "0x07cf3881eb4a58e76b41a792fa151510e7057037d80eda334682bd3e73389ec0",
         "asset": "0x0356f304b154d29d2a8fe22f1cb9107a9b564a733cf6b4cc47fd121ac1af90c9",
@@ -103,7 +103,7 @@ MARKETS = [
         "decimals": 18,
         "vToken": "0x05afdf4d18501d1d9d4664390df8c0786a6db8f28e66caa8800f1c2f51396492"
     },
-    {
+    { # Re7 USDC pool
         "pool": "0x07f135b4df21183991e9ff88380c2686dd8634fd4b09bb2b5b14415ac006fe1d",
         "extension": "0x07cf3881eb4a58e76b41a792fa151510e7057037d80eda334682bd3e73389ec0",
         "asset": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
@@ -133,11 +133,11 @@ MARKETS = [
     {
         "pool": "0x07f135b4df21183991e9ff88380c2686dd8634fd4b09bb2b5b14415ac006fe1d",
         "extension": "0x07cf3881eb4a58e76b41a792fa151510e7057037d80eda334682bd3e73389ec0",
-        "asset": "0x042b8f0484674ca266ac5d08e4ac6a3fe65bd3129795def2dca5c34ecc5f96d2",
-        "name": "Starknet Wrapped Staked Ether",
+        "asset": "0x57912720381af14b0e5c87aa4718ed5e527eab60b3801ebf702ab09139e38b",
+        "name": "Wrapped Staked Ether",
         "symbol": "wstETH",
         "decimals": 18,
-        "vToken": "0x02ff9b23f4ada0f5efa0e5acbc6faf79cfed551563eef72fa91287ae38a8dd09"
+        "vToken": "0x0341c0667fafa526400d29980aec17928732fdd585fd778d58a1f52836708b0e"
     },
     {
         "pool": "0x07f135b4df21183991e9ff88380c2686dd8634fd4b09bb2b5b14415ac006fe1d",
@@ -147,6 +147,42 @@ MARKETS = [
         "symbol": "STRK",
         "decimals": 18,
         "vToken": "0x00b5581d0bc94bc984cf79017d0f4b079c7e926af3d79bd92ff66fb451b340df"
+    },
+    { # Re7 wstETH pool
+        "pool": "0x59ae5a41c9ae05eae8d136ad3d7dc48e5a0947c10942b00091aeb7f42efabb7",
+        "extension": "0x07cf3881eb4a58e76b41a792fa151510e7057037d80eda334682bd3e73389ec0",
+        "asset": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+        "name": "Ether",
+        "symbol": "ETH",
+        "decimals": 18,
+        "vToken": "0x07bf0e1b5aabaa681cd3dba25c4e0db42fb4f0f564eb275949628435d337fae1"
+    }, 
+    {
+        "pool": "0x59ae5a41c9ae05eae8d136ad3d7dc48e5a0947c10942b00091aeb7f42efabb7",
+        "extension": "0x07cf3881eb4a58e76b41a792fa151510e7057037d80eda334682bd3e73389ec0",
+        "asset": "0x57912720381af14b0e5c87aa4718ed5e527eab60b3801ebf702ab09139e38b",
+        "name": "Wrapped Staked Ether",
+        "symbol": "wstETH",
+        "decimals": 18,
+        "vToken": "0x06deac5804db38126cf33a245ad2a775cbf74d2978ef24c1112bc1218bf4e22b"
+    },
+    { # Re7 Starknet Ecosystem
+        "pool": "0x6febb313566c48e30614ddab092856a9ab35b80f359868ca69b2649ca5d148d",
+        "extension": "0x07cf3881eb4a58e76b41a792fa151510e7057037d80eda334682bd3e73389ec0",
+        "asset": "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "decimals": 6,
+        "vToken": "0x017f19582c61479f2fe0b6606300e975c0a8f439102f43eeecc1d0e9b3d84350"
+    },
+    {
+        "pool": "0x6febb313566c48e30614ddab092856a9ab35b80f359868ca69b2649ca5d148d",
+        "extension": "0x07cf3881eb4a58e76b41a792fa151510e7057037d80eda334682bd3e73389ec0",
+        "asset": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK",
+        "decimals": 18,
+        "vToken": "0x07560a5077d454fe04d174c284fc3988c702ef7070ff2d1e1b81010e6688204e"
     }
 ]
 
