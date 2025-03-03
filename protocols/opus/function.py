@@ -97,6 +97,13 @@ COLLATERAL: List[Dict[str, Union[str, int]]] = [
         "decimals": 18,
         "gate": "0x03b709f3ab9bc072a195b907fb2c27688723b6e4abb812a8941def819f929bd8",
     },
+    {
+        "asset": "0x075afe6402ad5a5c20dd25e10ec3b3986acaa647b77e4ae24b0cbc9a54a27a87",
+        "name": "Ekubo Protocol",
+        "symbol": "EKUBO",
+        "decimals": 18,
+        "gate": "0x06d44c6172f6b68fda893348d33be58b69f0add83ed480d1192d19bc4188c8f6",
+    },
 ]
 
 
