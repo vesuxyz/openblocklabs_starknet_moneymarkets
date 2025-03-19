@@ -56,11 +56,11 @@ COLLATERAL: List[Dict[str, Union[str, int]]] = [
         "gate": "0x031a96fe18fe3fdab28822c82c81471f1802800723c8f3e209f1d9da53bc637d",
     },
     {
-        "asset": "0x042b8f0484674ca266ac5d08e4ac6a3fe65bd3129795def2dca5c34ecc5f96d2",
+        "asset": "0x0057912720381af14b0e5c87aa4718ed5e527eab60b3801ebf702ab09139e38b",
         "name": "Starknet Wrapped Staked Ether",
         "symbol": "wstETH",
         "decimals": 18,
-        "gate": "0x02d1e95661e7726022071c06a95cdae092595954096c373cde24a34bb3984cbf",
+        "gate": "0x03dc297a3788751d6d02acfea1b5dcc21a0eee1d34317a91aea2fbd49113ea58",
     },
     {
         "asset": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac",
@@ -96,6 +96,13 @@ COLLATERAL: List[Dict[str, Union[str, int]]] = [
         "symbol": "sSTRK",
         "decimals": 18,
         "gate": "0x03b709f3ab9bc072a195b907fb2c27688723b6e4abb812a8941def819f929bd8",
+    },
+    {
+        "asset": "0x075afe6402ad5a5c20dd25e10ec3b3986acaa647b77e4ae24b0cbc9a54a27a87",
+        "name": "Ekubo Protocol",
+        "symbol": "EKUBO",
+        "decimals": 18,
+        "gate": "0x06d44c6172f6b68fda893348d33be58b69f0add83ed480d1192d19bc4188c8f6",
     },
 ]
 
