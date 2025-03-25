@@ -9,7 +9,7 @@ from itertools import permutations
 # In addition to the configs below, make sure to add example.env vars
 NODE_URL = "https://starknet-mainnet.public.blastapi.io"
 SINGLETON=0x2545b2e5d519fc230e9cd781046d3a64e092114f07e44771e0d719d148725ef
-ELIGIBLE = ["STRK", "ETH", "USDC", "USDT", "xSTRK", "wstETH", "WBTC", "CASH"]
+ELIGIBLE = ["STRK", "ETH", "USDC", "USDT", "xSTRK", "wstETH", "WBTC"]
 STABLES = ["USDC", "USDT"]
 SCALE = 10**18
 MARKETS = [
@@ -390,6 +390,69 @@ MARKETS = [
         "symbol": "STRK",
         "decimals": 18,
         "vToken": "0x030ab9c447368fb18c9286f852fcf2082e6f64ec0be07fa08e6d63eb90524746"
+    },
+    { # Re7 rUSDC pool
+        "pool": "0x3de03fafe6120a3d21dc77e101de62e165b2cdfe84d12540853bd962b970f99",
+        "extension": "0x06ffa060b96fd027a7f5c32eb3c9b15505c089cf83b6fd318e3ce61fd8c3fac8",
+        "asset": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+        "name": "Ether",
+        "symbol": "ETH",
+        "decimals": 18,
+        "vToken": "0x013ec1d99495bd24f035d5b1b4b557776e6914cc1305c5dc3a89fcc1478cc7f9"
+    }, 
+    {
+        "pool": "0x3de03fafe6120a3d21dc77e101de62e165b2cdfe84d12540853bd962b970f99",
+        "extension": "0x06ffa060b96fd027a7f5c32eb3c9b15505c089cf83b6fd318e3ce61fd8c3fac8",
+        "asset": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac",
+        "name": "Wrapped BTC",
+        "symbol": "WBTC",
+        "decimals": 8,
+        "vToken": "0x02a88a39089b710236066f08e2cb5119fd8827b41a210f6591b7c7c5f3b0be87"
+    },
+    {
+        "pool": "0x3de03fafe6120a3d21dc77e101de62e165b2cdfe84d12540853bd962b970f99",
+        "extension": "0x06ffa060b96fd027a7f5c32eb3c9b15505c089cf83b6fd318e3ce61fd8c3fac8",
+        "asset": "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "decimals": 6,
+        "vToken": "0x07d7b4fa4701a6e065e9bb1a6dc927b1513cea42dbdafd0168ed64070d136fc6"
+    },
+    {
+        "pool": "0x3de03fafe6120a3d21dc77e101de62e165b2cdfe84d12540853bd962b970f99",
+        "extension": "0x06ffa060b96fd027a7f5c32eb3c9b15505c089cf83b6fd318e3ce61fd8c3fac8",
+        "asset": "0x57912720381af14b0e5c87aa4718ed5e527eab60b3801ebf702ab09139e38b",
+        "name": "Wrapped Staked Ether",
+        "symbol": "wstETH",
+        "decimals": 18,
+        "vToken": "0x05caa6da8f447af4426eb2c636eb7b908cd682690b5d128a7dc17ea3d0d36e4f"
+    },
+    {
+        "pool": "0x3de03fafe6120a3d21dc77e101de62e165b2cdfe84d12540853bd962b970f99",
+        "extension": "0x06ffa060b96fd027a7f5c32eb3c9b15505c089cf83b6fd318e3ce61fd8c3fac8",
+        "asset": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        "name": "Starknet Token",
+        "symbol": "STRK",
+        "decimals": 18,
+        "vToken": "0x07a377f3d47f2d806e660065835b2c66c8ba212337a00aa556713eb3e28035f9"
+    },
+    {
+        "pool": "0x3de03fafe6120a3d21dc77e101de62e165b2cdfe84d12540853bd962b970f99",
+        "extension": "0x06ffa060b96fd027a7f5c32eb3c9b15505c089cf83b6fd318e3ce61fd8c3fac8",
+        "asset": "0x028d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a",
+        "name": "Endur xSTRK",
+        "symbol": "xSTRK",
+        "decimals": 18,
+        "vToken": "0x069d2c197680bd60bafe1804239968275a1c85a1cad921809277306634b332b5"
+    },
+    {
+        "pool": "0x3de03fafe6120a3d21dc77e101de62e165b2cdfe84d12540853bd962b970f99",
+        "extension": "0x06ffa060b96fd027a7f5c32eb3c9b15505c089cf83b6fd318e3ce61fd8c3fac8",
+        "asset": "0x02019e47a0bc54ea6b4853c6123ffc8158ea3ae2af4166928b0de6e89f06de6c",
+        "name": "Relend USDC",
+        "symbol": "rUSDC",
+        "decimals": 18,
+        "vToken": "0xc0cae460e74a70cb7d8828b99f1147612c33bfb490f72f17356935af1540de"
     }
 ]
 
