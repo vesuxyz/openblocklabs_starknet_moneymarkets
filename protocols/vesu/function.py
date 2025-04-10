@@ -6,8 +6,9 @@ import pandas as pd
 from itertools import permutations
 
 # Configs
-# In addition to the configs below, make sure to add example.env vars
-NODE_URL = "https://starknet-mainnet.public.blastapi.io"
+# Make sure to add your Nethermind RPC key below or switch to a different provider
+RPC_KEY = ""
+NODE_URL = f"https://rpc.nethermind.io/mainnet-juno/?apikey={RPC_KEY}" #"https://starknet-mainnet.public.blastapi.io"
 SINGLETON=0x2545b2e5d519fc230e9cd781046d3a64e092114f07e44771e0d719d148725ef
 ELIGIBLE = ["STRK", "ETH", "USDC", "USDT", "xSTRK", "wstETH", "WBTC"]
 STABLES = ["USDC", "USDT"]
@@ -453,6 +454,24 @@ MARKETS = [
         "symbol": "rUSDC",
         "decimals": 18,
         "vToken": "0xc0cae460e74a70cb7d8828b99f1147612c33bfb490f72f17356935af1540de"
+    }, # Braavos Pool
+    {
+        "pool": "0x43f475012ed51ff6967041fcb9bf28672c96541ab161253fc26105f4c3b2afe",
+        "extension": "0x06ffa060b96fd027a7f5c32eb3c9b15505c089cf83b6fd318e3ce61fd8c3fac8",
+        "asset": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac",
+        "name": "Wrapped BTC",
+        "symbol": "WBTC",
+        "decimals": 8,
+        "vToken": "0x8288573352819b6af92ffd780d5dc29e38873c6c172a19fe228aaffd95376d"
+    },
+    {
+        "pool": "0x43f475012ed51ff6967041fcb9bf28672c96541ab161253fc26105f4c3b2afe",
+        "extension": "0x06ffa060b96fd027a7f5c32eb3c9b15505c089cf83b6fd318e3ce61fd8c3fac8",
+        "asset": "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "decimals": 6,
+        "vToken": "0x013ff7f2ad3e9ae7c94391b8271d5ab84f0ba7d59e33f781f3202829e41a028b"
     }
 ]
 
