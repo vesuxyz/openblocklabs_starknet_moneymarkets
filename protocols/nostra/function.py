@@ -87,6 +87,14 @@ ASSETS = [
         "i_token_c": "0x1fb33831f458b0786e1a041ac2e9df7603635a7caa88aa4ed30c23a787d4e3a",
         "d_token": "0x4349ca3d519e1b1da9da5da3cf19e2039b1776a9fe98c529f95ead7964fe0d",
     },
+    {
+        "asset_symbol": "WBTC",
+        "decimals": 8,
+        "asset_address": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac",
+        "i_token": "0x0735d0f09a4e8bf8a17005fa35061b5957dcaa56889fc75df9e94530ff6991ea",
+        "i_token_c": "0x05b7d301fa769274f20e89222169c0fad4d846c366440afc160aafadd6f88f0c",
+        "d_token": "0x0491480f21299223b9ce770f23a2c383437f9fbf57abc2ac952e9af8cdb12c97",
+    },
 ]
 
 
