@@ -9,7 +9,7 @@ from starknet_py.net.full_node_client import FullNodeClient
 from statistics import median
 
 
-NODE_URL = "https://free-rpc.nethermind.io/mainnet-juno"
+NODE_URL = "https://starknet-mainnet.public.blastapi.io/rpc/v0_7"
 SHRINE = "0x0498edfaf50ca5855666a700c25dd629d577eb9afccdf3b5977aec79aee55ada"
 EKUBO_ORACLE_EXTENSION = (
     "0x005e470ff654d834983a46b8f29dfa99963d5044b993cb7b9c92243a69dab38f"
@@ -103,6 +103,13 @@ COLLATERAL: List[Dict[str, Union[str, int]]] = [
         "symbol": "EKUBO",
         "decimals": 18,
         "gate": "0x06d44c6172f6b68fda893348d33be58b69f0add83ed480d1192d19bc4188c8f6",
+    },
+    {
+        "asset": "0x075afe6402ad5a5c20dd25e10ec3b3986a0x0124aeb495b947201f5fac96fd1138e326ad86195b98df6dec9009158a533b49caa647b77e4ae24b0cbc9a54a27a87",
+        "name": "Lords",
+        "symbol": "LORDS",
+        "decimals": 18,
+        "gate": "0x020c0fbc1f2a724a94ebe3575e54c4111fa3eaaf3dac938cfcbd96cc83317bbf",
     },
 ]
 
