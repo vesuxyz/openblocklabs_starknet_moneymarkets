@@ -2,7 +2,7 @@
 
 For OpenBlock Labs (OBL) to compute scores for participating Starknet Money Market protocols, we are asking protocols to 
 provide code for calculations as described in the
-[Starknet Money Markets New Data Guidelines](https://docs.google.com/document/d/1uQddC1KB4lDLGWuTuGtWAxR11N1Nromz90rmgmpks1U/edit).
+[Starknet Money Markets New Data Guidelines](https://docs.google.com/document/d/12EbTqFgCppEtUX9TBe9hTxGtvFFWRS62bqjXzDpkXVE/edit?usp=sharing).
 
 This repository provides a framework for sharing your code with OBL. If you have any questions or comments about this 
 process, please contact us in our Telegram channel.
