@@ -12,6 +12,7 @@ NODE_URL = f"https://rpc.nethermind.io/mainnet-juno/?apikey={RPC_KEY}" #"https:/
 SINGLETON=0x2545b2e5d519fc230e9cd781046d3a64e092114f07e44771e0d719d148725ef
 ELIGIBLE = ["STRK", "ETH", "USDC", "USDT", "xSTRK", "wstETH", "WBTC"]
 STABLES = ["USDC", "USDT"]
+NYB = ["WBTC"]
 SCALE = 10**18
 MARKETS = [
     { # Genesis pool
@@ -516,32 +517,40 @@ async def get_market_info(market_info, singleton_contract, provider):
         "rate_accumulator": rate_accumulator
     }
 
-# Fetch data for stablecoins combined
+# Fetch data for "same-asset-pairs" combined: STB and NYB
 # The extension contract tracks total debt and supplied liquidity per "lending pair".
 # We thus clean total supply from recursive supply/borrowing by deducting the debt from
 # the recursive lending pairs (e.g. USDC/USDT, USDT/USDC, etc.)
-async def get_stables_info(markets, results_markets, provider):
+async def get_stables_info(markets, results_markets, same_assets, same_assets_name, same_assets_addy, provider):
     df_markets = pd.DataFrame(results_markets)
     coroutines = [get_pair_info(pair_info, await Contract.from_address(provider=provider, address=pair_info[0]['extension']), pair_info[0]['pool'])
                       for pair_info in permutations(markets, 2) 
-                      if pair_info[0]['symbol'] in STABLES
-                      and pair_info[1]['symbol'] in STABLES
+                      if pair_info[0]['symbol'] in same_assets
+                      and pair_info[1]['symbol'] in same_assets
                       and pair_info[0]['pool'] == pair_info[1]['pool']]
     results_pairs = await asyncio.gather(*coroutines)
-    df_pairs = pd.DataFrame(results_pairs).groupby('asset').sum()
+    # Need to handle case where no recursive pairs exist (eg currently only wBTC asset)
+    if len(results_pairs) > 0:
+        df_pairs = pd.DataFrame(results_pairs).groupby('asset').sum()
+    
     coroutines = [get_price(market_info, await Contract.from_address(provider=provider, address=market_info['extension']), market_info['pool']) 
                   for market_info in markets 
-                  if market_info['symbol'] in STABLES]
+                  if market_info['symbol'] in same_assets]
     results_prices = await asyncio.gather(*coroutines)
     df_prices = pd.DataFrame(results_prices).groupby('asset').mean().reset_index()
     total_supply = 0
     total_borrow = 0
     total_non_recursive_supplied = 0
     for asset in df_prices.asset:
-        supply = df_markets.query('market == @asset').supply_token.iloc[0]
-        borrow = df_markets.query('market == @asset').borrow_token.iloc[0]
-        recursive_borrow = (df_markets.query('market == @asset').rate_accumulator.iloc[0] * 
-            df_pairs.query('asset == @asset').recursive_nominal_debt.iloc[0])
+        supply = df_markets.query('market == @asset').supply_token.sum()
+        borrow = df_markets.query('market == @asset').borrow_token.sum()
+        # Need to handle case where no recursive pairs exist (eg currently only wBTC asset)
+        if len(results_pairs) > 0:
+            recursive_borrow = (df_markets.query('market == @asset').rate_accumulator.iloc[0] * 
+                df_pairs.query('asset == @asset').recursive_nominal_debt.iloc[0])
+        else:
+            recursive_borrow = 0
+        
         non_recursive_supplied = supply - recursive_borrow
         price = df_prices.query('asset == @asset').price.iloc[0]
         total_supply += price * supply
@@ -550,9 +559,9 @@ async def get_stables_info(markets, results_markets, provider):
     return {
         "protocol": "Vesu",
         "date": df_markets.date[0],
-        "market": "0x0stable",
+        "market": same_assets_addy,
         "pool_id": df_markets.pool_id[0],
-        "tokenSymbol": "STB",
+        "tokenSymbol": same_assets_name,
         "supply_token": total_supply,
         "borrow_token": total_borrow,
         "net_supply_token": total_supply - total_borrow,
@@ -595,12 +604,17 @@ async def main():
     """
     provider = FullNodeClient(node_url=NODE_URL)
     singleton_contract = await Contract.from_address(provider=provider, address=SINGLETON)
+    # Fetch individual markets
     coroutines = [get_market_info(market_info, singleton_contract, provider)
                     for market_info in MARKETS 
                     if market_info['symbol'] in ELIGIBLE]
     results_markets = await asyncio.gather(*coroutines)
-    results_stables = await get_stables_info(MARKETS, results_markets, provider)
-    results_markets.append(results_stables)
+    # Fetch aggregated, non-recursive stables
+    results_stb = await get_stables_info(MARKETS, results_markets, STABLES, "STB", "0x0stable", provider)
+    results_markets.append(results_stb)
+    # Fetch aggregated, non-recursive bitcoin
+    results_nyb = await get_stables_info(MARKETS, results_markets, NYB, "NYB", "0x0nybbtc", provider)
+    results_markets.append(results_nyb)
     df = pd.DataFrame(results_markets)
     df.drop('rate_accumulator', axis=1, inplace=True)
     print(df.to_string())
