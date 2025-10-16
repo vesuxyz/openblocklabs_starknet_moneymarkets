@@ -7,14 +7,19 @@ from itertools import permutations
 
 # Configs
 # Make sure to add your Nethermind RPC key below or switch to a different provider
-RPC_KEY = ""
+RPC_KEY = "exysiEzs64QtlHQzZeYNf"
 NODE_URL = f"https://rpc.nethermind.io/mainnet-juno/?apikey={RPC_KEY}" #"https://starknet-mainnet.public.blastapi.io"
+NODE_URL = f"https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_8/{RPC_KEY}"
 SINGLETON=0x000d8d6dfec4d33bfb6895de9f3852143a17c6f92fd2a21da3d6924d34870160 #0x2545b2e5d519fc230e9cd781046d3a64e092114f07e44771e0d719d148725ef
+ORACLE=0xfe4bfb1b353ba51eb34dff963017f94af5a5cf8bdf3dfc191c504657f3c05
 ELIGIBLE = ["STRK", "ETH", "USDC", "USDT", "xSTRK", "wstETH", "WBTC"]
 STABLES = ["USDC", "USDT"]
 NYB = ["WBTC"]
 SCALE = 10**18
-# Note: The extension and vToken addresses are based on the Vesu V2 contract deployment
+
+# Note: 
+# - The extension and vToken addresses are based on the Vesu V1.1 contract deployment
+# - For Vesu V2 markets, we set the extension to 0x0
 MARKETS = [
     { # Genesis pool
         "pool": "0x4dc4f0ca6ea4961e4c8373265bfd5317678f4fe374d76f3fd7135f57763bf28",
@@ -23,7 +28,8 @@ MARKETS = [
         "name": "Ether",
         "symbol": "ETH",
         "decimals": 18,
-        "vToken": "0x0391bd9b58695b952aa15cffce50ba4650c954105df405ca8fc976ad7a65d646"
+        "vToken": "0x0391bd9b58695b952aa15cffce50ba4650c954105df405ca8fc976ad7a65d646",
+        "version": 1
     }, 
     {
         "pool": "0x4dc4f0ca6ea4961e4c8373265bfd5317678f4fe374d76f3fd7135f57763bf28",
@@ -32,7 +38,8 @@ MARKETS = [
         "name": "Wrapped BTC",
         "symbol": "WBTC",
         "decimals": 8,
-        "vToken": "0x00c452bacd439bab4e39aeea190b4ff81f44b019d4b3a25fa4da04a1cae7b6ff"
+        "vToken": "0x00c452bacd439bab4e39aeea190b4ff81f44b019d4b3a25fa4da04a1cae7b6ff",
+        "version": 1
     },
     {
         "pool": "0x4dc4f0ca6ea4961e4c8373265bfd5317678f4fe374d76f3fd7135f57763bf28",
@@ -41,7 +48,8 @@ MARKETS = [
         "name": "USD Coin",
         "symbol": "USDC",
         "decimals": 6,
-        "vToken": "0x0227942991ea19a1843ed6d28af9458cf2566a3c2d6fccb2fd28f0424fce44b4"
+        "vToken": "0x0227942991ea19a1843ed6d28af9458cf2566a3c2d6fccb2fd28f0424fce44b4",
+        "version": 1
     },
     {
         "pool": "0x4dc4f0ca6ea4961e4c8373265bfd5317678f4fe374d76f3fd7135f57763bf28",
@@ -50,7 +58,8 @@ MARKETS = [
         "name": "Tether USD",
         "symbol": "USDT",
         "decimals": 6,
-        "vToken": "0x040e480d202b47eb9335c31fc328ecda216231425dae74f87d1a97e6e7901dce"
+        "vToken": "0x040e480d202b47eb9335c31fc328ecda216231425dae74f87d1a97e6e7901dce",
+        "version": 1
     },
     {
         "pool": "0x4dc4f0ca6ea4961e4c8373265bfd5317678f4fe374d76f3fd7135f57763bf28",
@@ -59,7 +68,8 @@ MARKETS = [
         "name": "Wrapped Staked Ether",
         "symbol": "wstETH",
         "decimals": 18,
-        "vToken": "0x07cb1a46709214b94f51655be696a4ff6f9bdbbb6edb19418b6a55d190536048"
+        "vToken": "0x07cb1a46709214b94f51655be696a4ff6f9bdbbb6edb19418b6a55d190536048",
+        "version": 1
     },
     {
         "pool": "0x4dc4f0ca6ea4961e4c8373265bfd5317678f4fe374d76f3fd7135f57763bf28",
@@ -68,7 +78,8 @@ MARKETS = [
         "name": "Starknet Token",
         "symbol": "STRK",
         "decimals": 18,
-        "vToken": "0x0147ae3337b168ac9abe80a7214f0cb9e874b25c3db530a8e04beb98a134e07a"
+        "vToken": "0x0147ae3337b168ac9abe80a7214f0cb9e874b25c3db530a8e04beb98a134e07a",
+        "version": 1
     },
     { # Re7 xSTRK pool
         "pool": "0x052fb52363939c3aa848f8f4ac28f0a51379f8d1b971d8444de25fbd77d8f161",
@@ -77,7 +88,8 @@ MARKETS = [
         "name": "Endur xSTRK",
         "symbol": "xSTRK",
         "decimals": 18,
-        "vToken": "0x040f67320745980459615f4f3e7dd71002dbe6c68c8249c847c82dbe327b23cb"
+        "vToken": "0x040f67320745980459615f4f3e7dd71002dbe6c68c8249c847c82dbe327b23cb",
+        "version": 1
     },
     {
         "pool": "0x052fb52363939c3aa848f8f4ac28f0a51379f8d1b971d8444de25fbd77d8f161",
@@ -86,25 +98,8 @@ MARKETS = [
         "name": "Starknet Token",
         "symbol": "STRK",
         "decimals": 18,
-        "vToken": "0x05f4c1bc95be3e8c234c633b239a8ec965b748230c9b04319688ca8012e034c3"
-    },
-    { # Re7 sSTRK pool
-        "pool": "0x02e06b705191dbe90a3fbaad18bb005587548048b725116bff3104ca501673c1",
-        "extension": "0x4e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
-        "asset": "0x0356f304b154d29d2a8fe22f1cb9107a9b564a733cf6b4cc47fd121ac1af90c9",
-        "name": "Staked Starknet Token",
-        "symbol": "sSTRK",
-        "decimals": 18,
-        "vToken": "0x0644eb0e0807b7a929ce82dd53a9538b18782945e33080df17a3535d18278931"
-    },
-    {
-        "pool": "0x02e06b705191dbe90a3fbaad18bb005587548048b725116bff3104ca501673c1",
-        "extension": "0x4e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
-        "asset": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
-        "name": "Starknet Token",
-        "symbol": "STRK",
-        "decimals": 18,
-        "vToken": "0x027fb7238bce02c6633d04840bcfea53a1ec3bb135dc547c43c6a9fdf88e0969"
+        "vToken": "0x05f4c1bc95be3e8c234c633b239a8ec965b748230c9b04319688ca8012e034c3",
+        "version": 1
     },
     { # Re7 USDC pool
         "pool": "0x07f135b4df21183991e9ff88380c2686dd8634fd4b09bb2b5b14415ac006fe1d",
@@ -113,7 +108,8 @@ MARKETS = [
         "name": "Ether",
         "symbol": "ETH",
         "decimals": 18,
-        "vToken": "0x02ad74b0a40b2ee2a68ad3bec91a99e9d6a8690a079901d998a5473763917f7f"
+        "vToken": "0x02ad74b0a40b2ee2a68ad3bec91a99e9d6a8690a079901d998a5473763917f7f",
+        "version": 1
     }, 
     {
         "pool": "0x07f135b4df21183991e9ff88380c2686dd8634fd4b09bb2b5b14415ac006fe1d",
@@ -122,7 +118,8 @@ MARKETS = [
         "name": "Wrapped BTC",
         "symbol": "WBTC",
         "decimals": 8,
-        "vToken": "0x037f38969b64cfaae0c40cd1565dc7c61a0e6e7dd3da3709fcea2303755ae648"
+        "vToken": "0x037f38969b64cfaae0c40cd1565dc7c61a0e6e7dd3da3709fcea2303755ae648",
+        "version": 1
     },
     {
         "pool": "0x07f135b4df21183991e9ff88380c2686dd8634fd4b09bb2b5b14415ac006fe1d",
@@ -131,7 +128,8 @@ MARKETS = [
         "name": "USD Coin",
         "symbol": "USDC",
         "decimals": 6,
-        "vToken": "0x079824ac0f81aa0e4483628c3365c09fa74d86650fadccb2a733284d3a0a8b85"
+        "vToken": "0x079824ac0f81aa0e4483628c3365c09fa74d86650fadccb2a733284d3a0a8b85",
+        "version": 1
     },
     {
         "pool": "0x07f135b4df21183991e9ff88380c2686dd8634fd4b09bb2b5b14415ac006fe1d",
@@ -140,7 +138,8 @@ MARKETS = [
         "name": "Wrapped Staked Ether",
         "symbol": "wstETH",
         "decimals": 18,
-        "vToken": "0x02d19cfe8e7a21306adc37d3f3be61699db07618b9175bc49cff1502d09ad253"
+        "vToken": "0x02d19cfe8e7a21306adc37d3f3be61699db07618b9175bc49cff1502d09ad253",
+        "version": 1
     },
     {
         "pool": "0x07f135b4df21183991e9ff88380c2686dd8634fd4b09bb2b5b14415ac006fe1d",
@@ -149,7 +148,8 @@ MARKETS = [
         "name": "Starknet Token",
         "symbol": "STRK",
         "decimals": 18,
-        "vToken": "0x00dddeb3a7dec8d69a447aff8bc2f126d1b02814c341427dc5658e852f1d3524"
+        "vToken": "0x00dddeb3a7dec8d69a447aff8bc2f126d1b02814c341427dc5658e852f1d3524",
+        "version": 1
     },
     { # Re7 wstETH pool
         "pool": "0x59ae5a41c9ae05eae8d136ad3d7dc48e5a0947c10942b00091aeb7f42efabb7",
@@ -158,7 +158,8 @@ MARKETS = [
         "name": "Ether",
         "symbol": "ETH",
         "decimals": 18,
-        "vToken": "0x02ba0f8f2defa6986b50d861b720984185296e48faed2133ca14712ddc6aaaf1"
+        "vToken": "0x02ba0f8f2defa6986b50d861b720984185296e48faed2133ca14712ddc6aaaf1",
+        "version": 1
     }, 
     {
         "pool": "0x59ae5a41c9ae05eae8d136ad3d7dc48e5a0947c10942b00091aeb7f42efabb7",
@@ -167,7 +168,8 @@ MARKETS = [
         "name": "Wrapped Staked Ether",
         "symbol": "wstETH",
         "decimals": 18,
-        "vToken": "0x008ccba554dd24f8346f439a9198d018c09dfb86a1ed652f6656644e3a5a500c"
+        "vToken": "0x008ccba554dd24f8346f439a9198d018c09dfb86a1ed652f6656644e3a5a500c",
+        "version": 1
     },
     { # Re7 Starknet Ecosystem
         "pool": "0x6febb313566c48e30614ddab092856a9ab35b80f359868ca69b2649ca5d148d",
@@ -176,7 +178,8 @@ MARKETS = [
         "name": "USD Coin",
         "symbol": "USDC",
         "decimals": 6,
-        "vToken": "0x048f4e75c12ca9d35d6172b1cb5f1f70b094888003f9c94fe19f12a67947fd6d"
+        "vToken": "0x048f4e75c12ca9d35d6172b1cb5f1f70b094888003f9c94fe19f12a67947fd6d",
+        "version": 1
     },
     {
         "pool": "0x6febb313566c48e30614ddab092856a9ab35b80f359868ca69b2649ca5d148d",
@@ -185,61 +188,28 @@ MARKETS = [
         "name": "Starknet Token",
         "symbol": "STRK",
         "decimals": 18,
-        "vToken": "0x04228f2b404fa26a518d3ae4e8bb717f3e7f6d21ee5160517813a0eaec76e711"
+        "vToken": "0x04228f2b404fa26a518d3ae4e8bb717f3e7f6d21ee5160517813a0eaec76e711",
+        "version": 1
     },
-    { # Alterscope wstETH pool
-        "pool": "0x5c678347b60b99b72f245399ba27900b5fc126af11f6637c04a193d508dda26",
-        "extension": "0x4e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
-        "asset": "0x57912720381af14b0e5c87aa4718ed5e527eab60b3801ebf702ab09139e38b",
-        "name": "Wrapped Staked Ether",
-        "symbol": "wstETH",
-        "decimals": 18,
-        "vToken": "0x0753bb8a6b65cb799316618e566bcec80260c6c18b47781468b567e9786dad49"
-    },
-    {
-        "pool": "0x5c678347b60b99b72f245399ba27900b5fc126af11f6637c04a193d508dda26",
-        "extension": "0x4e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
-        "asset": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
-        "name": "Ether",
-        "symbol": "ETH",
-        "decimals": 18,
-        "vToken": "0x0008dd328c41b57422a5b9d8823c08882072a64ebd6bfab91a20fe2d43170f0d"
-    }, 
-    {
-        "pool": "0x5c678347b60b99b72f245399ba27900b5fc126af11f6637c04a193d508dda26",
-        "extension": "0x4e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
+    { # Braavos Pool
+        "pool": "0x43f475012ed51ff6967041fcb9bf28672c96541ab161253fc26105f4c3b2afe",
+        "extension": "0x04e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
         "asset": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac",
         "name": "Wrapped BTC",
         "symbol": "WBTC",
         "decimals": 8,
-        "vToken": "0x011ab5b9bf6d21943339e89f0cc4e15c04a036f4d02be4d68db476d9ef6920e1"
+        "vToken": "0x6d507cf5c751a6569d3a10447aee58f9b1410bb6a7d9c52d22875cd5377b29",
+        "version": 1
     },
     {
-        "pool": "0x5c678347b60b99b72f245399ba27900b5fc126af11f6637c04a193d508dda26",
-        "extension": "0x4e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
+        "pool": "0x43f475012ed51ff6967041fcb9bf28672c96541ab161253fc26105f4c3b2afe",
+        "extension": "0x04e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
         "asset": "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
         "name": "USD Coin",
         "symbol": "USDC",
         "decimals": 6,
-        "vToken": "0x02814990be52a1f8532d100f22cb26ad6aeda2928abc18480e409ef75df8ce84"
-    },
-    {
-        "pool": "0x5c678347b60b99b72f245399ba27900b5fc126af11f6637c04a193d508dda26",
-        "extension": "0x4e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
-        "asset": "0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8",
-        "name": "Tether USD",
-        "symbol": "USDT",
-        "decimals": 6,
-        "vToken": "0x05bda0367f4fb74471d0fcef1a645b1cba4d0f6ba9ca757e0cf3cbf997ac3999"
-    },
-    {
-        "pool": "0x5c678347b60b99b72f245399ba27900b5fc126af11f6637c04a193d508dda26",
-        "extension": "0x4e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
-        "asset": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
-        "name": "Starknet Token",
-        "symbol": "STRK",
-        "decimals": 18,
-        "vToken": "0x05974b310a4da473d0249353c7b26e8db5eb31fda66b583a7297aca8c9820a13"
+        "vToken": "0x411587c1e5e6b09c9c1416efbebfe5adb5009ac99171b219caef4e59123b3ed",
+        "version": 1
     },
     { # Alterscope CASH pool
         "pool": "0x7bafdbd2939cc3f3526c587cb0092c0d9a93b07b9ced517873f7f6bf6c65563",
@@ -248,7 +218,8 @@ MARKETS = [
         "name": "Cash",
         "symbol": "CASH",
         "decimals": 18,
-        "vToken": "0x00597354f0c1f01fde571fee8bc32d6c5479171561eab28fdb30448b9ed9d3c9"
+        "vToken": "0x00597354f0c1f01fde571fee8bc32d6c5479171561eab28fdb30448b9ed9d3c9",
+        "version": 1
     },
     {
         "pool": "0x7bafdbd2939cc3f3526c587cb0092c0d9a93b07b9ced517873f7f6bf6c65563",
@@ -257,7 +228,8 @@ MARKETS = [
         "name": "Ether",
         "symbol": "ETH",
         "decimals": 18,
-        "vToken": "0x0115bd2016ba0d9a1a0075e943f8cc3098ea969baf5e57cde870865896cc9ca3"
+        "vToken": "0x0115bd2016ba0d9a1a0075e943f8cc3098ea969baf5e57cde870865896cc9ca3",
+        "version": 1
     }, 
     {
         "pool": "0x7bafdbd2939cc3f3526c587cb0092c0d9a93b07b9ced517873f7f6bf6c65563",
@@ -266,7 +238,8 @@ MARKETS = [
         "name": "Wrapped BTC",
         "symbol": "WBTC",
         "decimals": 8,
-        "vToken": "0x0628c6ee44401855310f6a6657cf151194ba61d1b66139c942860a2138fac521"
+        "vToken": "0x0628c6ee44401855310f6a6657cf151194ba61d1b66139c942860a2138fac521",
+        "version": 1
     },
     {
         "pool": "0x7bafdbd2939cc3f3526c587cb0092c0d9a93b07b9ced517873f7f6bf6c65563",
@@ -275,7 +248,8 @@ MARKETS = [
         "name": "USD Coin",
         "symbol": "USDC",
         "decimals": 6,
-        "vToken": "0x030902db47321a71202d4473a59b54db2b1ad11897a0328ead363db7e9dce4c8"
+        "vToken": "0x030902db47321a71202d4473a59b54db2b1ad11897a0328ead363db7e9dce4c8",
+        "version": 1
     },
     {
         "pool": "0x7bafdbd2939cc3f3526c587cb0092c0d9a93b07b9ced517873f7f6bf6c65563",
@@ -284,7 +258,8 @@ MARKETS = [
         "name": "Tether USD",
         "symbol": "USDT",
         "decimals": 6,
-        "vToken": "0x04258ae715716d47880bcf05d20c1670474d9ea66c09b27883df20537e1eb91b"
+        "vToken": "0x04258ae715716d47880bcf05d20c1670474d9ea66c09b27883df20537e1eb91b",
+        "version": 1
     },
     {
         "pool": "0x7bafdbd2939cc3f3526c587cb0092c0d9a93b07b9ced517873f7f6bf6c65563",
@@ -293,7 +268,8 @@ MARKETS = [
         "name": "Starknet Token",
         "symbol": "STRK",
         "decimals": 18,
-        "vToken": "0x0351efe34e732a283a35fa91bf52c0a3a6e89b0cc88ae32d4fde84e541b4fec2"
+        "vToken": "0x0351efe34e732a283a35fa91bf52c0a3a6e89b0cc88ae32d4fde84e541b4fec2",
+        "version": 1
     },
     { # Alterscope xSTRK pool
         "pool": "0x27f2bb7fb0e232befc5aa865ee27ef82839d5fad3e6ec1de598d0fab438cb56",
@@ -302,7 +278,8 @@ MARKETS = [
         "name": "Endur xSTRK",
         "symbol": "xSTRK",
         "decimals": 18,
-        "vToken": "0x020478f0a1b1ef010aa24104ba0e91bf60efcabed02026b75e1d68690809e453"
+        "vToken": "0x020478f0a1b1ef010aa24104ba0e91bf60efcabed02026b75e1d68690809e453",
+        "version": 1
     },
     {
         "pool": "0x27f2bb7fb0e232befc5aa865ee27ef82839d5fad3e6ec1de598d0fab438cb56",
@@ -311,7 +288,8 @@ MARKETS = [
         "name": "Ether",
         "symbol": "ETH",
         "decimals": 18,
-        "vToken": "0x0530d3af399e4345ac3093c59715da3aacb8d9535c7ec50653573b32fbfbb7ad"
+        "vToken": "0x0530d3af399e4345ac3093c59715da3aacb8d9535c7ec50653573b32fbfbb7ad",
+        "version": 1
     }, 
     {
         "pool": "0x27f2bb7fb0e232befc5aa865ee27ef82839d5fad3e6ec1de598d0fab438cb56",
@@ -320,7 +298,8 @@ MARKETS = [
         "name": "Wrapped BTC",
         "symbol": "WBTC",
         "decimals": 8,
-        "vToken": "0x000a570a7382c0eb80db2a2317d4c74bf307c866f673b0367e28a6dffcc288a9"
+        "vToken": "0x000a570a7382c0eb80db2a2317d4c74bf307c866f673b0367e28a6dffcc288a9",
+        "version": 1
     },
     {
         "pool": "0x27f2bb7fb0e232befc5aa865ee27ef82839d5fad3e6ec1de598d0fab438cb56",
@@ -329,7 +308,8 @@ MARKETS = [
         "name": "USD Coin",
         "symbol": "USDC",
         "decimals": 6,
-        "vToken": "0x072803e813eb69d9aaea1c458ed779569c81bde0a2fc03ea2869876d13fa08d4"
+        "vToken": "0x072803e813eb69d9aaea1c458ed779569c81bde0a2fc03ea2869876d13fa08d4",
+        "version": 1
     },
     {
         "pool": "0x27f2bb7fb0e232befc5aa865ee27ef82839d5fad3e6ec1de598d0fab438cb56",
@@ -338,7 +318,8 @@ MARKETS = [
         "name": "Tether USD",
         "symbol": "USDT",
         "decimals": 6,
-        "vToken": "0x02d647a41926df2a438ade8daf9d3f0026d97290f82edbaab4012673c7f5d81b"
+        "vToken": "0x02d647a41926df2a438ade8daf9d3f0026d97290f82edbaab4012673c7f5d81b",
+        "version": 1
     },
     {
         "pool": "0x27f2bb7fb0e232befc5aa865ee27ef82839d5fad3e6ec1de598d0fab438cb56",
@@ -347,138 +328,273 @@ MARKETS = [
         "name": "Starknet Token",
         "symbol": "STRK",
         "decimals": 18,
-        "vToken": "0x00427c4afb5a3733af903ca3cd4661a5ab52183b8bcdfe17f3899fc72984b181"
+        "vToken": "0x00427c4afb5a3733af903ca3cd4661a5ab52183b8bcdfe17f3899fc72984b181",
+        "version": 1
     },
-    { # Alterscope Cornerstone pool
-        "pool": "0x2906e07881acceff9e4ae4d9dacbcd4239217e5114001844529176e1f0982ec",
-        "extension": "0x4e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
+    { # Prime pool
+        "pool": "0x451fe483d5921a2919ddd81d0de6696669bccdacd859f72a4fba7656b97c3b5",
+        "extension": "0x0",
         "asset": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
         "name": "Ether",
         "symbol": "ETH",
         "decimals": 18,
-        "vToken": "0x07edbd742a8804b21b39c9bb66552462b2d75ba0dc8e3f9a3b90004d7bb9721a"
+        "vToken": "0x6ac248c18c69e57573aa3eeccbb7f8cd29e3024561be252ee7b34b96c1043e",
+        "version": 2
     }, 
     {
-        "pool": "0x2906e07881acceff9e4ae4d9dacbcd4239217e5114001844529176e1f0982ec",
-        "extension": "0x4e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
+        "pool": "0x451fe483d5921a2919ddd81d0de6696669bccdacd859f72a4fba7656b97c3b5",
+        "extension": "0x0",
         "asset": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac",
         "name": "Wrapped BTC",
         "symbol": "WBTC",
         "decimals": 8,
-        "vToken": "0x0090b7dd422a77e4daec4bf5ecfa612fe973fa76acd1679e2927b811a8b67480"
+        "vToken": "0x4ecb0667140b9f45b067d026953ed79f22723f1cfac05a7b26c3ac06c88f56c",
+        "version": 2
     },
     {
-        "pool": "0x2906e07881acceff9e4ae4d9dacbcd4239217e5114001844529176e1f0982ec",
-        "extension": "0x4e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
+        "pool": "0x451fe483d5921a2919ddd81d0de6696669bccdacd859f72a4fba7656b97c3b5",
+        "extension": "0x0",
         "asset": "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
         "name": "USD Coin",
         "symbol": "USDC",
         "decimals": 6,
-        "vToken": "0x07b207a4f928f1b729c9ad26da5e99d6a13b3a23216c597ad545390048cd051f"
+        "vToken": "0x79c83c3eb20df05d9e3ebdd45990060101bd126666181de622e432948f3e9",
+        "version": 2
     },
     {
-        "pool": "0x2906e07881acceff9e4ae4d9dacbcd4239217e5114001844529176e1f0982ec",
-        "extension": "0x4e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
+        "pool": "0x451fe483d5921a2919ddd81d0de6696669bccdacd859f72a4fba7656b97c3b5",
+        "extension": "0x0",
         "asset": "0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8",
         "name": "Tether USD",
         "symbol": "USDT",
         "decimals": 6,
-        "vToken": "0x025ca5e450d801e56b36f03147cd2c4cbaf515480002959321ed4ee807b59c97"
+        "vToken": "0x6be9f8980779930045b93c295105c6810d38191ec522b5175ddf7dbf9b22f9d",
+        "version": 2
     },
     {
-        "pool": "0x2906e07881acceff9e4ae4d9dacbcd4239217e5114001844529176e1f0982ec",
-        "extension": "0x4e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
-        "asset": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
-        "name": "Starknet Token",
-        "symbol": "STRK",
-        "decimals": 18,
-        "vToken": "0x06682141475134b4c4c249cba0a7171126f66efff49a4b57e71acd8d49f670f5"
-    },
-    { # Re7 rUSDC pool
-        "pool": "0x3de03fafe6120a3d21dc77e101de62e165b2cdfe84d12540853bd962b970f99",
-        "extension": "0x04e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
-        "asset": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
-        "name": "Ether",
-        "symbol": "ETH",
-        "decimals": 18,
-        "vToken": "0x004aeb34b4c27a165e836dd4543e8cfcf3dcc3ab8d8c6c6d178f963de502e612"
-    }, 
-    {
-        "pool": "0x3de03fafe6120a3d21dc77e101de62e165b2cdfe84d12540853bd962b970f99",
-        "extension": "0x04e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
-        "asset": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac",
-        "name": "Wrapped BTC",
-        "symbol": "WBTC",
-        "decimals": 8,
-        "vToken": "0x07f1027e02f240d57d552e53efe5aaea65d80dfcb52d75cb843fead08f6ce948"
-    },
-    {
-        "pool": "0x3de03fafe6120a3d21dc77e101de62e165b2cdfe84d12540853bd962b970f99",
-        "extension": "0x04e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
-        "asset": "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
-        "name": "USD Coin",
-        "symbol": "USDC",
-        "decimals": 6,
-        "vToken": "0x0150a0af5a972d0d0b4e6a87c21afe68f12dd4abcd7bc6f67cb49dbbec518238"
-    },
-    {
-        "pool": "0x3de03fafe6120a3d21dc77e101de62e165b2cdfe84d12540853bd962b970f99",
-        "extension": "0x04e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
+        "pool": "0x451fe483d5921a2919ddd81d0de6696669bccdacd859f72a4fba7656b97c3b5",
+        "extension": "0x0",
         "asset": "0x57912720381af14b0e5c87aa4718ed5e527eab60b3801ebf702ab09139e38b",
         "name": "Wrapped Staked Ether",
         "symbol": "wstETH",
         "decimals": 18,
-        "vToken": "0x06ab84857f7988d033dfa20f81feb4ba1403094111c046b0fde9b643535ff551"
+        "vToken": "0x7d231447ac838f45740ed823c3ae0982d94377bc9f165f751a371a41e9c1740",
+        "version": 2
     },
     {
-        "pool": "0x3de03fafe6120a3d21dc77e101de62e165b2cdfe84d12540853bd962b970f99",
-        "extension": "0x04e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
+        "pool": "0x451fe483d5921a2919ddd81d0de6696669bccdacd859f72a4fba7656b97c3b5",
+        "extension": "0x0",
         "asset": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
         "name": "Starknet Token",
         "symbol": "STRK",
         "decimals": 18,
-        "vToken": "0x02cc368fe8f4075cee60013fe3ace1bb01ef861ba697321aab928b19a265db67"
+        "vToken": "0x6d6d2bf905dd199c78f2e421521d8473042737be9f47904e7578536c10f279d",
+        "version": 2
     },
-    {
-        "pool": "0x3de03fafe6120a3d21dc77e101de62e165b2cdfe84d12540853bd962b970f99",
-        "extension": "0x04e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
-        "asset": "0x028d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a",
-        "name": "Endur xSTRK",
-        "symbol": "xSTRK",
-        "decimals": 18,
-        "vToken": "0x318761ecb936a2905306c371c7935d2a6a0fa24493ac7c87be3859a36e2563a"
-    },
-    {
-        "pool": "0x3de03fafe6120a3d21dc77e101de62e165b2cdfe84d12540853bd962b970f99",
-        "extension": "0x04e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
-        "asset": "0x02019e47a0bc54ea6b4853c6123ffc8158ea3ae2af4166928b0de6e89f06de6c",
-        "name": "Relend USDC",
-        "symbol": "rUSDC",
-        "decimals": 18,
-        "vToken": "0x87d42b833c5e9f59269e23723510456f1d140b7554a24ab46e6fc8c00e8f24"
-    }, # Braavos Pool
-    {
-        "pool": "0x43f475012ed51ff6967041fcb9bf28672c96541ab161253fc26105f4c3b2afe",
-        "extension": "0x04e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
+    { # Re7 xBTC pool
+        "pool": "0x03a8416bf20d036df5b1cf3447630a2e1cb04685f6b0c3a70ed7fb1473548ecf",
+        "extension": "0x0",
         "asset": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac",
         "name": "Wrapped BTC",
         "symbol": "WBTC",
         "decimals": 8,
-        "vToken": "0x6d507cf5c751a6569d3a10447aee58f9b1410bb6a7d9c52d22875cd5377b29"
+        "vToken": "0x131cc09160f144ec5880a0bc1a0633999030fa6a546388b5d0667cb171a52a0",
+        "version": 2
     },
     {
-        "pool": "0x43f475012ed51ff6967041fcb9bf28672c96541ab161253fc26105f4c3b2afe",
-        "extension": "0x04e06e04b8d624d039aa1c3ca8e0aa9e21dc1ccba1d88d0d650837159e0ee054",
+        "pool": "0x03a8416bf20d036df5b1cf3447630a2e1cb04685f6b0c3a70ed7fb1473548ecf",
+        "extension": "0x0",
+        "asset": "0x0593e034dda23eea82d2ba9a30960ed42cf4a01502cc2351dc9b9881f9931a68",
+        "name": "Solv BTC",
+        "symbol": "SolvBTC",
+        "decimals": 18,
+        "vToken": "0x590117befc944f23b39ca5b0401e6aaa7834e90f2eb284baa2bfc475bd66190",
+        "version": 2
+    },
+    {
+        "pool": "0x03a8416bf20d036df5b1cf3447630a2e1cb04685f6b0c3a70ed7fb1473548ecf",
+        "extension": "0x0",
+        "asset": "0x04daa17763b286d1e59b97c283c0b8c949994c361e426a28f743c67bdfe9a32f",
+        "name": "Threshold BTC",
+        "symbol": "tBTC",
+        "decimals": 18,
+        "vToken": "0x4cbe8b13ebadd744254b09a40f4395f580e8a4a30acb2653849f61d12bfa039",
+        "version": 2
+    },
+    {
+        "pool": "0x03a8416bf20d036df5b1cf3447630a2e1cb04685f6b0c3a70ed7fb1473548ecf",
+        "extension": "0x0",
+        "asset": "0x036834a40984312f7f7de8d31e3f6305b325389eaeea5b1c0664b2fb936461a4",
+        "name": "Lombard BTC",
+        "symbol": "LBTC",
+        "decimals": 8,
+        "vToken": "0x73476ed5b0d781182ede4c806241a93cb47cb00b6de354855a1fc6233a13b35",
+        "version": 2
+    },
+    {
+        "pool": "0x03a8416bf20d036df5b1cf3447630a2e1cb04685f6b0c3a70ed7fb1473548ecf",
+        "extension": "0x0",
+        "asset": "0x6a567e68c805323525fe1649adb80b03cddf92c23d2629a6779f54192dffc13",
+        "name": "Endur WBTC",
+        "symbol": "xWBTC",
+        "decimals": 8,
+        "vToken": "0x62a162d0827db6f43ebb850cbef3c99fc7969e3070b83a2236c9f3713c89fd8",
+        "version": 2
+    },
+    {
+        "pool": "0x03a8416bf20d036df5b1cf3447630a2e1cb04685f6b0c3a70ed7fb1473548ecf",
+        "extension": "0x0",
+        "asset": "0x580f3dc564a7b82f21d40d404b3842d490ae7205e6ac07b1b7af2b4a5183dc9",
+        "name": "Endur SolvBTC",
+        "symbol": "xsBTC",
+        "decimals": 18,
+        "vToken": "0x76ea5335932dafb727f31dec684e75169e7a582478d681fe3a73494669940fb",
+        "version": 2
+    },
+    {
+        "pool": "0x03a8416bf20d036df5b1cf3447630a2e1cb04685f6b0c3a70ed7fb1473548ecf",
+        "extension": "0x0",
+        "asset": "0x43a35c1425a0125ef8c171f1a75c6f31ef8648edcc8324b55ce1917db3f9b91",
+        "name": "Endur tBTC",
+        "symbol": "xtBTC",
+        "decimals": 18,
+        "vToken": "0x3d90538d9b66c7fa3e582e7af5e96018a4f8f1e43d5eace23ba820fbe06ff70",
+        "version": 2
+    },
+    {
+        "pool": "0x03a8416bf20d036df5b1cf3447630a2e1cb04685f6b0c3a70ed7fb1473548ecf",
+        "extension": "0x0",
+        "asset": "0x7dd3c80de9fcc5545f0cb83678826819c79619ed7992cc06ff81fc67cd2efe0",
+        "name": "Endur LBTC",
+        "symbol": "xLBTC",
+        "decimals": 8,
+        "vToken": "0x31e5609fee92e0bc200436449ee2cc07a141fe77859c474427fc9490f87e637",
+        "version": 2
+    },
+    {
+        "pool": "0x03a8416bf20d036df5b1cf3447630a2e1cb04685f6b0c3a70ed7fb1473548ecf",
+        "extension": "0x0",
+        "asset": "0x04e4fb1a9ca7e84bae609b9dc0078ad7719e49187ae7e425bb47d131710eddac",
+        "name": "Midas Re7 BTC",
+        "symbol": "mRe7BTC",
+        "decimals": 18,
+        "vToken": "0x13448c4404424a534d22a46330432bd2ef5d884740e8b9fba7f4c273f85ada3",
+        "version": 2
+    },
+    { # Re7 USDC Core pool
+        "pool": "0x3976cac265a12609934089004df458ea29c776d77da423c96dc761d09d24124",
+        "extension": "0x0",
         "asset": "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
         "name": "USD Coin",
         "symbol": "USDC",
         "decimals": 6,
-        "vToken": "0x411587c1e5e6b09c9c1416efbebfe5adb5009ac99171b219caef4e59123b3ed"
+        "vToken": "0x60e91c92fdad9e7245b9bb4e143b880e4e9354d0b95c5c2d33dc347dded3bf0",
+        "version": 2
+    },
+    {
+        "pool": "0x03976cac265a12609934089004df458ea29c776d77da423c96dc761d09d24124",
+        "extension": "0x0",
+        "asset": "0x023a312ece4a275e38c9fc169e3be7b5613a0cb55fe1bece4422b09a88434573",
+        "name": "uniBTC",
+        "symbol": "uniBTC",
+        "decimals": 8,
+        "vToken": "0x6d656d23f38ca239877ea261ce265129cc3fae66f8e9d8948cf19a146c736c5",
+        "version": 2
+    },
+    {
+        "pool": "0x03976cac265a12609934089004df458ea29c776d77da423c96dc761d09d24124",
+        "extension": "0x0",
+        "asset": "0x0593e034dda23eea82d2ba9a30960ed42cf4a01502cc2351dc9b9881f9931a68",
+        "name": "Solv BTC",
+        "symbol": "SolvBTC",
+        "decimals": 18,
+        "vToken": "0x7e3d504483981d498c124e5901355af870760f99b09c01082de242e3ca7b002",
+        "version": 2
+    },
+    {
+        "pool": "0x03976cac265a12609934089004df458ea29c776d77da423c96dc761d09d24124",
+        "extension": "0x0",
+        "asset": "0x04daa17763b286d1e59b97c283c0b8c949994c361e426a28f743c67bdfe9a32f",
+        "name": "Threshold BTC",
+        "symbol": "tBTC",
+        "decimals": 18,
+        "vToken": "0x31f1d4092f343a4c0a7672ff6215740c2ccdb88c9679f8a54b0a311da5e2779",
+        "version": 2
+    },
+    {
+        "pool": "0x03976cac265a12609934089004df458ea29c776d77da423c96dc761d09d24124",
+        "extension": "0x0",
+        "asset": "0x036834a40984312f7f7de8d31e3f6305b325389eaeea5b1c0664b2fb936461a4",
+        "name": "Lombard BTC",
+        "symbol": "LBTC",
+        "decimals": 8,
+        "vToken": "0x4e37a738586ef9113e12e72ccfb018e5d18c0c10704d8380fb99510d5586ae2",
+        "version": 2
+    },
+    { # Re7 USDC Prime pool
+        "pool": "0x2eef0c13b10b487ea5916b54c0a7f98ec43fb3048f60fdeedaf5b08f6f88aaf",
+        "extension": "0x0",
+        "asset": "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "decimals": 6,
+        "vToken": "0x5abd079783b72ef84935dbca1ea82d1687d76b5f0dd45a075cfcde47533f650",
+        "version": 2
+    },
+    {
+        "pool": "0x2eef0c13b10b487ea5916b54c0a7f98ec43fb3048f60fdeedaf5b08f6f88aaf",
+        "extension": "0x0",
+        "asset": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac",
+        "name": "Wrapped BTC",
+        "symbol": "WBTC",
+        "decimals": 8,
+        "vToken": "0x1a71039b15e5f5413ea450216387877adf962d5908811780c8f3dda5386b166",
+        "version": 2
+    },
+    { # Re7 USDC Stable Core pool
+        "pool": "0x073702fce24aba36da1eac539bd4bae62d4d6a76747b7cdd3e016da754d7a135",
+        "extension": "0x0",
+        "asset": "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "decimals": 6,
+        "vToken": "0x415e4dd356cae963d24f7c8f31443ff77369d021880ab452c36e6ad7ade43e0",
+        "version": 2
+    },
+    {
+        "pool": "0x073702fce24aba36da1eac539bd4bae62d4d6a76747b7cdd3e016da754d7a135",
+        "extension": "0x0",
+        "asset": "0x04be8945e61dc3e19ebadd1579a6bd53b262f51ba89e6f8b0c4bc9a7e3c633fc",
+        "name": "Midase Re7 Yield",
+        "symbol": "mRe7YIELD",
+        "decimals": 18,
+        "vToken": "0x133269be4c0a147ebe2bb28b1b0dd203ea1cd43357caf5cf48bc424ccb5e7f9",
+        "version": 2
+    },
+    { # Re7 USDC Frontier pool
+        "pool": "0x05c03e7e0ccfe79c634782388eb1e6ed4e8e2a013ab0fcc055140805e46261bd",
+        "extension": "0x0",
+        "asset": "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "decimals": 6,
+        "vToken": "0x5abd079783b72ef84935dbca1ea82d1687d76b5f0dd45a075cfcde47533f650",
+        "version": 2
+    },
+    {
+        "pool": "0x05c03e7e0ccfe79c634782388eb1e6ed4e8e2a013ab0fcc055140805e46261bd",
+        "extension": "0x0",
+        "asset": "0x02cab84694e1be6af2ce65b1ae28a76009e8ec99ec4bc17047386abf20cbb688",
+        "name": "Yield BTC.B",
+        "symbol": "YBTC.B",
+        "decimals": 8,
+        "vToken": "0x1a71039b15e5f5413ea450216387877adf962d5908811780c8f3dda5386b166",
+        "version": 2
     }
 ]
 
 # Fetch data for a specific market from Vesu singleton directly
-async def get_market_info(market_info, singleton_contract, provider):
+async def get_market_info(market_info, provider):
     block = await provider.get_block_number()
     now = datetime.now()
     formatted_date = now.strftime("%Y-%m-%d")
@@ -494,8 +610,17 @@ async def get_market_info(market_info, singleton_contract, provider):
     #   borrowed by multiplication with total_nominal_debt
     # - we add the raw rate_accumulator to the return values so 'get_stables_info' 
     #   can reuse, then drop the column of the DataFrame at the end again
-    asset_config = (await singleton_contract.functions["asset_config_unsafe"].call(
-        int(market_info['pool'], base=16), int(market_info['asset'], base=16)))[0][0]
+
+    # deal with different versions of Vesu
+    if market_info['version'] == 1:
+        target_contract = await Contract.from_address(provider=provider, address=SINGLETON)
+        asset_config = (await target_contract.functions["asset_config_unsafe"].call(
+            int(market_info['pool'], base=16), int(market_info['asset'], base=16)))[0][0]
+    else:
+        target_contract = await Contract.from_address(provider=provider, address=market_info['pool'])
+        asset_config = (await target_contract.functions["asset_config"].call(
+            int(market_info['asset'], base=16)))[0]
+
     asset_scale = asset_config['scale']
     reserve = asset_config['reserve'] / asset_scale
     rate_accumulator = asset_config['last_rate_accumulator'] / SCALE
@@ -524,7 +649,7 @@ async def get_market_info(market_info, singleton_contract, provider):
 # the recursive lending pairs (e.g. USDC/USDT, USDT/USDC, etc.)
 async def get_stables_info(markets, results_markets, same_assets, same_assets_name, same_assets_addy, provider):
     df_markets = pd.DataFrame(results_markets)
-    coroutines = [get_pair_info(pair_info, await Contract.from_address(provider=provider, address=pair_info[0]['extension']), pair_info[0]['pool'])
+    coroutines = [get_pair_info(pair_info, provider)
                       for pair_info in permutations(markets, 2) 
                       if pair_info[0]['symbol'] in same_assets
                       and pair_info[1]['symbol'] in same_assets
@@ -534,7 +659,7 @@ async def get_stables_info(markets, results_markets, same_assets, same_assets_na
     if len(results_pairs) > 0:
         df_pairs = pd.DataFrame(results_pairs).groupby('asset').sum()
     
-    coroutines = [get_price(market_info, await Contract.from_address(provider=provider, address=market_info['extension']), market_info['pool']) 
+    coroutines = [get_price(market_info, provider) 
                   for market_info in markets 
                   if market_info['symbol'] in same_assets]
     results_prices = await asyncio.gather(*coroutines)
@@ -580,21 +705,35 @@ async def get_stables_info(markets, results_markets, same_assets, same_assets_na
     }
 
 # Fetch total supply and debt for a specific lending pair
-async def get_pair_info(pair_info, extension_contract, pool):
+async def get_pair_info(pair_info, provider):
     collateral_asset = pair_info[0]['asset']
     debt_asset = pair_info[1]['asset']
-    pair_info = (await extension_contract.functions['pairs'].call(
-        int(pool, base=16), int(collateral_asset, base=16), int(debt_asset, base=16)))[0]
+
+    # deal with different versions of Vesu
+    if pair_info[0]['version'] == 1:
+        target_contract =  await Contract.from_address(provider=provider, address=pair_info[0]['extension'])
+        pair_info = (await target_contract.functions['pairs'].call(
+            int(pair_info[0]['pool'], base=16), int(collateral_asset, base=16), int(debt_asset, base=16)))[0]
+    else:
+        target_contract =  await Contract.from_address(provider=provider, address=pair_info[0]['pool'])
+        pair_info = (await target_contract.functions['pairs'].call(
+            int(collateral_asset, base=16), int(debt_asset, base=16)))[0]
+    
     return {
         "asset": debt_asset,
         "recursive_nominal_debt": pair_info['total_nominal_debt'] / SCALE
     }
 
 # Fetch the oracle price for a specific asset (pulls from Pragma)
-async def get_price(market_info, extension_contract, pool):
+async def get_price(market_info, provider):
     asset = market_info['asset']
-    asset_price = (await extension_contract.functions['price'].call(
-        int(pool, base=16), int(asset, base=16)))[0]['value']
+    oracle_contract = await Contract.from_address(provider=provider, address=ORACLE)
+    asset_price = (await oracle_contract.functions['price'].call(int(asset, base=16)))[0]['value']
+
+    #target_contract = await Contract.from_address(provider=provider, address=market_info['extension'])
+    #asset_price = (await target_contract.functions['price'].call(
+    #    int(market_info['pool'], base=16), int(asset, base=16)))[0]['value']
+    
     return {
         "asset": asset,
         "price": asset_price / SCALE
@@ -612,9 +751,8 @@ async def main():
     Supply your calculation here according to the Guidelines.
     """
     provider = FullNodeClient(node_url=NODE_URL)
-    singleton_contract = await Contract.from_address(provider=provider, address=SINGLETON)
     # Fetch individual markets
-    coroutines = [get_market_info(market_info, singleton_contract, provider)
+    coroutines = [get_market_info(market_info, provider)
                     for market_info in MARKETS 
                     if market_info['symbol'] in ELIGIBLE]
     results_markets = await asyncio.gather(*coroutines)
