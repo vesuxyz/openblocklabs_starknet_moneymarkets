@@ -7,8 +7,7 @@ from itertools import permutations
 
 # Configs
 # Make sure to add your Nethermind RPC key below or switch to a different provider
-RPC_KEY = "exysiEzs64QtlHQzZeYNf"
-NODE_URL = f"https://rpc.nethermind.io/mainnet-juno/?apikey={RPC_KEY}" #"https://starknet-mainnet.public.blastapi.io"
+RPC_KEY = ""
 NODE_URL = f"https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_8/{RPC_KEY}"
 SINGLETON=0x000d8d6dfec4d33bfb6895de9f3852143a17c6f92fd2a21da3d6924d34870160 #0x2545b2e5d519fc230e9cd781046d3a64e092114f07e44771e0d719d148725ef
 ORACLE=0xfe4bfb1b353ba51eb34dff963017f94af5a5cf8bdf3dfc191c504657f3c05
